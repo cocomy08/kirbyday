@@ -114,8 +114,9 @@
   border-radius: 3px;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
   line-height: 1.4;
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 16px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 16px), transparent);
 }
 
 .month-cell .more-count {
@@ -164,7 +165,14 @@
 
 .day-expand-item .de-color { width: 3px; height: 28px; border-radius: 2px; flex-shrink: 0; }
 .day-expand-item .de-info { flex: 1; min-width: 0; }
-.day-expand-item .de-title { font-size: 14px; font-weight: 500; }
+.day-expand-item .de-title {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 16px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 16px), transparent);
+}
 .day-expand-item .de-time { font-size: 11px; color: var(--text-secondary); }
 .day-expand-empty { text-align: center; font-size: 13px; color: var(--text-tertiary); padding: 16px; }
 
@@ -245,10 +253,11 @@
   border-radius: 5px;
   overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
   cursor: pointer;
   z-index: 2;
   line-height: 1.3;
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 12px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 12px), transparent);
 }
 
 /* ── Week list ── */
@@ -289,6 +298,16 @@
   border-radius: 6px;
   font-size: 13px;
   font-weight: 500;
+  overflow: hidden;
+}
+
+.wl-task-item > span:last-child {
+  white-space: nowrap;
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 16px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 16px), transparent);
 }
 
 .wl-task-item .wl-time { font-size: 11px; color: var(--text-secondary); font-variant-numeric: tabular-nums; min-width: 36px; }

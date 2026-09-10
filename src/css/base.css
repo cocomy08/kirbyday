@@ -73,7 +73,6 @@ body {
   flex-direction: column;
   overflow: hidden;
   padding-top: var(--safe-top);
-  padding-bottom: var(--safe-bottom);
 }
 
 button {

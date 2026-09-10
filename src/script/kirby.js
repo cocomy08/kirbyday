@@ -43,6 +43,7 @@ const KirbyChat = {
 严格输出JSON（不要输出其他内容）：
 {"title":"标题","date":"YYYY-MM-DD","startTime":"HH:mm","endTime":"HH:mm","location":"地点","priority":0,"note":"备注"}
 
+title必须是5个字以内的精炼总结，例如"组会""面试""取快递""约饭"。
 priority: 0=无,1=低,2=中,3=高
 没有的字段填空字符串。今天是${today}(周${dow})，请据此计算相对日期。多个事件输出JSON数组。`;
 
