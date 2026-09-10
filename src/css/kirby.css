@@ -1,16 +1,7 @@
-#tab-kirby {
-  display: none;
-  flex-direction: column;
-  height: 100%;
-}
-
+#tab-kirby { display: none; flex-direction: column; height: 100%; }
 #tab-kirby.active { display: flex; }
 
-.kirby-chat {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-}
+.kirby-chat { flex: 1; overflow-y: auto; padding: 16px; }
 
 .kirby-welcome {
   display: flex;
@@ -19,146 +10,66 @@
   justify-content: center;
   padding: 60px 24px;
   text-align: center;
-  gap: 10px;
+  gap: 8px;
 }
 
-.kirby-welcome h2 {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.3px;
-}
+.kirby-welcome h2 { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.4px; }
+.kirby-welcome p { font-size: 15px; color: var(--text-secondary); max-width: 260px; }
+.kirby-hint { font-size: 13px; color: var(--text-tertiary); padding: 5px 14px; background: var(--bg-input); border-radius: var(--radius-full); }
 
-.kirby-welcome p {
-  font-size: 15px;
-  color: var(--text-secondary);
-}
-
-.kirby-hint {
-  font-size: 13px;
-  color: var(--text-tertiary);
-  padding: 6px 14px;
-  background: var(--bg);
-  border-radius: 20px;
-}
-
-.kirby-messages {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+.kirby-messages { display: flex; flex-direction: column; gap: 8px; }
 
 .kirby-msg {
   max-width: 82%;
-  padding: 12px 16px;
+  padding: 10px 14px;
   font-size: 15px;
-  line-height: 1.5;
+  line-height: 1.47;
   word-break: break-word;
-  animation: msgIn 300ms cubic-bezier(0.32,0.72,0,1);
+  animation: msgSlideIn 250ms cubic-bezier(0.25,0.1,0.25,1);
 }
 
-@keyframes msgIn {
-  from { opacity: 0; transform: translateY(8px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes msgSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .kirby-msg.user {
   align-self: flex-end;
   background: var(--accent);
   color: #fff;
-  border-radius: 20px 20px 6px 20px;
+  border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg);
 }
 
 .kirby-msg.ai {
   align-self: flex-start;
   background: var(--bg-card);
   color: var(--text);
-  border-radius: 20px 20px 20px 6px;
-  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 4px;
+  box-shadow: var(--shadow-xs);
 }
 
 /* Review card */
 .review-card {
-  margin-top: 10px;
+  margin-top: 8px;
   background: var(--bg);
   border-radius: var(--radius-sm);
   padding: 12px;
-  animation: msgIn 300ms cubic-bezier(0.32,0.72,0,1);
 }
 
-.review-card .review-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
-}
+.review-card .review-title { font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 8px; }
 
-.review-field {
-  display: flex;
-  gap: 6px;
-  padding: 6px 0;
-  border-bottom: 0.5px solid var(--separator);
-  align-items: center;
-}
-
+.review-field { display: flex; gap: 6px; padding: 5px 0; border-bottom: 0.5px solid var(--separator); align-items: center; }
 .review-field:last-of-type { border-bottom: none; }
+.review-field .rf-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); min-width: 38px; }
+.review-field .rf-value { flex: 1; font-size: 14px; color: var(--text); }
+.review-field .rf-input { flex: 1; padding: 5px 8px; background: var(--bg-card); border: none; border-radius: 6px; font-size: 14px; color: var(--text); outline: none; }
+.review-field .rf-input:focus { box-shadow: 0 0 0 2px var(--accent-light); }
 
-.review-field .rf-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  min-width: 40px;
-}
-
-.review-field .rf-value {
-  flex: 1;
-  font-size: 14px;
-  color: var(--text);
-  min-width: 0;
-}
-
-.review-field .rf-input {
-  flex: 1;
-  padding: 6px 10px;
-  background: var(--bg-card);
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  color: var(--text);
-  outline: none;
-  min-width: 0;
-}
-
-.review-field .rf-input:focus {
-  box-shadow: 0 0 0 2px var(--accent-light);
-}
-
-.review-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.review-actions button {
-  flex: 1;
-  padding: 10px;
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 200ms ease;
-}
-
-.review-actions .review-confirm {
-  background: var(--accent);
-  color: #fff;
-}
-
-.review-actions .review-confirm:active { opacity: 0.85; }
-
-.review-actions .review-edit {
-  background: var(--bg-card);
-  color: var(--accent);
-}
+.review-actions { display: flex; gap: 8px; margin-top: 10px; }
+.review-actions button { flex: 1; padding: 9px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; transition: opacity var(--transition-fast); }
+.review-actions .review-confirm { background: var(--accent); color: #fff; }
+.review-actions .review-confirm:active { opacity: 0.8; }
+.review-actions .review-edit { background: var(--bg-card); color: var(--accent); }
 
 .undo-banner {
   display: flex;
@@ -170,67 +81,46 @@
   border-radius: var(--radius-sm);
   margin-top: 8px;
   font-size: 14px;
-  animation: msgIn 300ms ease;
+  animation: msgSlideIn 250ms ease;
 }
 
-.undo-banner button {
-  color: var(--accent);
-  font-weight: 700;
-  font-size: 14px;
-}
+.undo-banner button { color: var(--accent); font-weight: 700; font-size: 14px; }
 
-.kirby-msg.loading {
-  display: flex;
-  gap: 5px;
-  padding: 14px 18px;
-}
-
-.kirby-msg.loading span {
-  width: 7px;
-  height: 7px;
-  background: var(--text-tertiary);
-  border-radius: 50%;
-  animation: bounce 1.4s infinite ease-in-out;
-}
-
+.kirby-msg.loading { display: flex; gap: 5px; padding: 14px 18px; }
+.kirby-msg.loading span { width: 6px; height: 6px; background: var(--text-tertiary); border-radius: 50%; animation: dotBounce 1.4s infinite ease-in-out; }
 .kirby-msg.loading span:nth-child(1) { animation-delay: -0.32s; }
 .kirby-msg.loading span:nth-child(2) { animation-delay: -0.16s; }
+@keyframes dotBounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
-@keyframes bounce {
-  0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1); }
-}
-
+/* Input area */
 .kirby-input-area {
   display: flex;
   align-items: flex-end;
   gap: 10px;
-  padding: 10px 16px;
+  padding: 10px 16px 12px;
   background: var(--bg);
   flex-shrink: 0;
 }
 
 .kirby-input {
   flex: 1;
-  padding: 12px 16px;
+  padding: 10px 14px;
   background: var(--bg-card);
   border: none;
-  border-radius: 22px;
+  border-radius: var(--radius-lg);
   font-size: 15px;
   resize: none;
   outline: none;
   max-height: 100px;
-  box-shadow: var(--shadow-card);
-  transition: box-shadow 250ms ease;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow var(--transition-normal);
 }
 
-.kirby-input:focus {
-  box-shadow: var(--shadow-card), 0 0 0 2px var(--accent-light);
-}
+.kirby-input:focus { box-shadow: var(--shadow-xs), 0 0 0 2px var(--accent-light); }
 
 .kirby-send-btn {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -238,7 +128,8 @@
   color: #fff;
   border-radius: 50%;
   flex-shrink: 0;
-  transition: transform 200ms ease, opacity 200ms ease;
+  transition: opacity var(--transition-fast);
 }
 
-.kirby-send-btn:active { transform: scale(0.9); }
+.kirby-send-btn:active { opacity: 0.75; }
+.kirby-send-btn svg { width: 18px; height: 18px; }

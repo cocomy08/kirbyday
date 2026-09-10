@@ -1,50 +1,132 @@
-/* Theme: Ocean */
+/* ═══════════════════════════════════════
+   Theme: Notion
+   ═══════════════════════════════════════ */
+body.theme-notion {
+  --bg: #f7f6f3;
+  --bg-card: #ffffff;
+  --bg-input: #f0efec;
+  --bg-hover: rgba(55,53,47,0.04);
+  --bg-active: rgba(55,53,47,0.08);
+  --text: #37352f;
+  --text-secondary: #787774;
+  --text-tertiary: #b4b4b0;
+  --accent: #2eaadc;
+  --accent-hover: #29a0d0;
+  --accent-light: rgba(46,170,220,0.1);
+  --green: #0f7b6c;
+  --orange: #dfab01;
+  --red: #eb5757;
+  --separator: rgba(55,53,47,0.06);
+  --border: rgba(55,53,47,0.08);
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.05);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+}
+
+/* ═══════════════════════════════════════
+   Theme: Corporate
+   ═══════════════════════════════════════ */
+body.theme-corporate {
+  --bg: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-input: #f1f5f9;
+  --bg-hover: rgba(0,0,0,0.03);
+  --bg-active: rgba(0,0,0,0.06);
+  --text: #1e293b;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-light: rgba(37,99,235,0.08);
+  --green: #16a34a;
+  --orange: #d97706;
+  --red: #dc2626;
+  --separator: rgba(0,0,0,0.06);
+  --border: #e2e8f0;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.06);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+}
+
+/* ═══════════════════════════════════════
+   Theme: Ocean
+   ═══════════════════════════════════════ */
 body.theme-ocean {
+  --bg: #eff6ff;
+  --bg-card: #ffffff;
+  --bg-input: #e0f2fe;
+  --bg-hover: rgba(0,0,0,0.03);
+  --bg-active: rgba(0,0,0,0.06);
+  --text: #0c4a6e;
+  --text-secondary: #3b82a0;
+  --text-tertiary: #7dd3fc;
   --accent: #0284c7;
-  --accent-light: rgba(2,132,199,0.12);
-  --bg: #e8f4fd;
-  --bg-card: #ffffff;
+  --accent-hover: #0369a1;
+  --accent-light: rgba(2,132,199,0.1);
+  --green: #059669;
+  --orange: #d97706;
+  --red: #dc2626;
+  --separator: rgba(0,0,0,0.05);
+  --border: #bae6fd;
 }
 
-/* Theme: Forest */
-body.theme-forest {
-  --accent: #059669;
-  --accent-light: rgba(5,150,105,0.12);
-  --bg: #ecfdf5;
-  --bg-card: #ffffff;
-}
-
-/* Dark mode */
+/* ═══════════════════════════════════════
+   Dark mode
+   ═══════════════════════════════════════ */
 body.dark {
   --bg: #000000;
   --bg-card: #1c1c1e;
   --bg-elevated: #2c2c2e;
-  --bg-grouped: #000000;
-  --bg-input: #39393d;
+  --bg-input: #2c2c2e;
+  --bg-hover: rgba(255,255,255,0.06);
+  --bg-active: rgba(255,255,255,0.1);
   --text: #f5f5f7;
-  --text-secondary: #8e8e93;
-  --text-tertiary: #636366;
+  --text-secondary: #98989d;
+  --text-tertiary: #48484a;
+  --separator: rgba(255,255,255,0.06);
   --border: rgba(255,255,255,0.08);
-  --separator: rgba(255,255,255,0.08);
-  --shadow-card: 0 0.5px 1px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.3);
-  --shadow-modal: 0 8px 40px rgba(0,0,0,0.5);
+  --shadow-xs: none;
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
 }
 
 body.dark .modal-overlay { background: rgba(0,0,0,0.4); }
-body.dark .modal-content { background: var(--bg-card); }
 
-body.dark .theme-preview-default {
-  background: #000;
+body.dark.theme-notion {
+  --bg: #191919;
+  --bg-card: #252525;
+  --bg-input: #2f2f2f;
+  --text: #e0dfdb;
+  --text-secondary: #9b9a97;
+  --text-tertiary: #5a5a58;
+  --accent: #529cca;
 }
 
-body.dark .theme-preview-default::after { background: #1c1c1e; }
+body.dark.theme-corporate {
+  --bg: #0f172a;
+  --bg-card: #1e293b;
+  --bg-input: #334155;
+  --text: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #475569;
+  --accent: #3b82f6;
+  --border: #334155;
+}
 
 body.dark.theme-ocean {
   --bg: #0c1929;
-  --bg-card: #142236;
-}
-
-body.dark.theme-forest {
-  --bg: #0a1f15;
-  --bg-card: #12291e;
+  --bg-card: #162236;
+  --bg-input: #1e3a5f;
+  --text: #e0f2fe;
+  --text-secondary: #7dd3fc;
+  --text-tertiary: #2b5f8a;
 }

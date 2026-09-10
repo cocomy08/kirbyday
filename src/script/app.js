@@ -27,7 +27,32 @@ const App = {
     Router.switchTab('tasks');
 
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
+      navigator.serviceWorker.register('./sw.js').then(reg => {
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          if (!newWorker) return;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              this._showUpdateToast(newWorker);
+            }
+          });
+        });
+
+        setInterval(() => { reg.update(); }, 60 * 1000);
+      }).catch(() => {});
+
+      navigator.serviceWorker.addEventListener('message', event => {
+        if (event.data && event.data.type === 'UPDATED') {
+          location.reload();
+        }
+      });
+
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        refreshing = true;
+        location.reload();
+      });
     }
   },
 
@@ -151,6 +176,16 @@ const App = {
 
   _initToday() {
     document.getElementById('btn-today').addEventListener('click', () => CalendarView.goToday());
+  },
+
+  _showUpdateToast(worker) {
+    const toast = document.getElementById('update-toast');
+    if (!toast) return;
+    toast.classList.remove('hidden');
+    document.getElementById('update-btn').addEventListener('click', () => {
+      worker.postMessage('SKIP_WAITING');
+      toast.classList.add('hidden');
+    });
   }
 };
 
