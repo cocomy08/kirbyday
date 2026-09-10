@@ -1,11 +1,12 @@
 const SettingsView = {
   init() {
     this._loadValues();
-    this._bindNavigation();
+    this._bindNav();
     this._bindToggles();
     this._bindAPI();
     this._bindTheme();
     this._bindSelects();
+    this._bindData();
   },
 
   _loadValues() {
@@ -18,21 +19,14 @@ const SettingsView = {
 
     if (s.darkMode) {
       document.body.classList.add('dark');
-      document.getElementById('setting-dark-mode').classList.add('on');
-      document.getElementById('setting-dark-mode').setAttribute('aria-checked', 'true');
+      const m = document.querySelector('meta[name="theme-color"]');
+      if (m) m.content = '#000000';
+      this._setToggle('setting-dark-mode', true);
     }
-    if (s.showLunar) {
-      document.getElementById('setting-lunar').classList.add('on');
-      document.getElementById('setting-lunar').setAttribute('aria-checked', 'true');
-    }
-    if (s.showHolidays) {
-      document.getElementById('setting-holidays').classList.add('on');
-      document.getElementById('setting-holidays').setAttribute('aria-checked', 'true');
-    }
-    if (s.showWeekNum) {
-      document.getElementById('setting-weeknum').classList.add('on');
-      document.getElementById('setting-weeknum').setAttribute('aria-checked', 'true');
-    }
+    this._setToggle('setting-lunar', s.showLunar !== false);
+    this._setToggle('setting-holidays', s.showHolidays !== false);
+    this._setToggle('setting-weeknum', !!s.showWeekNum);
+
     if (s.theme && s.theme !== 'default') {
       document.body.classList.add('theme-' + s.theme);
       document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
@@ -40,12 +34,18 @@ const SettingsView = {
       if (tc) tc.classList.add('active');
     }
     if (s.model) {
-      const sel = document.getElementById('setting-model');
-      sel.innerHTML = `<option value="${s.model}" selected>${s.model}</option>`;
+      document.getElementById('setting-model').innerHTML = `<option value="${s.model}" selected>${s.model}</option>`;
     }
   },
 
-  _bindNavigation() {
+  _setToggle(id, on) {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.classList.toggle('on', on);
+    btn.setAttribute('aria-checked', on);
+  },
+
+  _bindNav() {
     document.querySelectorAll('.settings-item[data-setting]').forEach(item => {
       item.addEventListener('click', () => {
         const key = item.dataset.setting;
@@ -53,6 +53,7 @@ const SettingsView = {
         if (sub) {
           document.getElementById('settings-main').classList.add('hidden');
           sub.classList.remove('hidden');
+          if (key === 'data') this._updateStorageInfo();
         }
       });
     });
@@ -65,24 +66,28 @@ const SettingsView = {
   },
 
   _bindToggles() {
-    const toggleMap = {
-      'setting-dark-mode': { key: 'darkMode', onToggle: v => {
-        document.body.classList.toggle('dark', v);
-        const meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.content = v ? '#0d1117' : '#0969da';
-      }},
+    const map = {
+      'setting-dark-mode': {
+        key: 'darkMode',
+        cb: v => {
+          document.body.classList.toggle('dark', v);
+          const m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.content = v ? '#000000' : '#f2f2f7';
+        }
+      },
       'setting-lunar': { key: 'showLunar' },
       'setting-holidays': { key: 'showHolidays' },
       'setting-weeknum': { key: 'showWeekNum' }
     };
 
-    Object.entries(toggleMap).forEach(([id, cfg]) => {
+    Object.entries(map).forEach(([id, cfg]) => {
       const btn = document.getElementById(id);
+      if (!btn) return;
       btn.addEventListener('click', () => {
-        const isOn = btn.classList.toggle('on');
-        btn.setAttribute('aria-checked', isOn);
-        Store.setSetting(cfg.key, isOn);
-        if (cfg.onToggle) cfg.onToggle(isOn);
+        const on = btn.classList.toggle('on');
+        btn.setAttribute('aria-checked', on);
+        Store.setSetting(cfg.key, on);
+        if (cfg.cb) cfg.cb(on);
       });
     });
   },
@@ -96,17 +101,15 @@ const SettingsView = {
       const btn = document.getElementById('btn-fetch-models');
       btn.textContent = '拉取中...';
       btn.disabled = true;
-
       try {
-        const resp = await fetch(url + '/models', {
-          headers: { 'Authorization': 'Bearer ' + key }
-        });
+        const resp = await fetch(url + '/models', { headers: { 'Authorization': 'Bearer ' + key } });
         if (!resp.ok) throw new Error('HTTP ' + resp.status);
         const data = await resp.json();
         const models = (data.data || []).map(m => m.id).sort();
         const sel = document.getElementById('setting-model');
-        sel.innerHTML = models.map(m => `<option value="${m}">${m}</option>`).join('');
-        if (models.length === 0) sel.innerHTML = '<option value="">无可用模型</option>';
+        sel.innerHTML = models.length
+          ? models.map(m => `<option value="${m}">${m}</option>`).join('')
+          : '<option value="">无可用模型</option>';
       } catch (err) {
         alert('拉取失败: ' + err.message);
       } finally {
@@ -119,7 +122,9 @@ const SettingsView = {
       Store.setSetting('apiUrl', document.getElementById('setting-api-url').value.trim());
       Store.setSetting('apiKey', document.getElementById('setting-api-key').value.trim());
       Store.setSetting('model', document.getElementById('setting-model').value);
-      alert('配置已保存');
+      const btn = document.getElementById('btn-save-api');
+      btn.textContent = '已保存';
+      setTimeout(() => { btn.textContent = '保存配置'; }, 1500);
     });
   },
 
@@ -129,7 +134,7 @@ const SettingsView = {
         document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
         card.classList.add('active');
         const theme = card.dataset.theme;
-        document.body.className = document.body.className.replace(/theme-\w+/g, '');
+        document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
         if (theme !== 'default') document.body.classList.add('theme-' + theme);
         if (Store.getSetting('darkMode')) document.body.classList.add('dark');
         Store.setSetting('theme', theme);
@@ -138,14 +143,64 @@ const SettingsView = {
   },
 
   _bindSelects() {
-    document.getElementById('setting-week-start').addEventListener('change', e => {
-      Store.setSetting('weekStart', parseInt(e.target.value));
+    document.getElementById('setting-week-start').addEventListener('change', e => Store.setSetting('weekStart', parseInt(e.target.value)));
+    document.getElementById('setting-default-view').addEventListener('change', e => Store.setSetting('defaultView', e.target.value));
+    document.getElementById('setting-reminder').addEventListener('change', e => Store.setSetting('reminder', parseInt(e.target.value)));
+  },
+
+  _bindData() {
+    document.getElementById('btn-export').addEventListener('click', async () => {
+      const json = await Store.exportData();
+      const now = new Date();
+      const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+      const blob = new Blob([json], { type: 'application/octet-stream' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `kd_${dateStr}.bck`;
+      a.click();
+      URL.revokeObjectURL(a.href);
     });
-    document.getElementById('setting-default-view').addEventListener('change', e => {
-      Store.setSetting('defaultView', e.target.value);
+
+    document.getElementById('btn-import').addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.bck,.json';
+      input.addEventListener('change', async () => {
+        const file = input.files[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          await Store.importData(text);
+          alert('导入成功，将刷新页面');
+          location.reload();
+        } catch (err) {
+          alert('导入失败: ' + err.message);
+        }
+      });
+      input.click();
     });
-    document.getElementById('setting-reminder').addEventListener('change', e => {
-      Store.setSetting('reminder', parseInt(e.target.value));
+
+    document.getElementById('btn-clear-data').addEventListener('click', async () => {
+      if (!confirm('确定要清除所有数据吗？此操作不可恢复。')) return;
+      await Store.importData(JSON.stringify({ version: 2, tasks: [], settings: {} }));
+      alert('数据已清除，将刷新页面');
+      location.reload();
     });
+  },
+
+  async _updateStorageInfo() {
+    const est = await Store.getStorageEstimate();
+    const taskCount = Store.getTasks().length;
+    const el = document.getElementById('storage-info');
+    if (!el) return;
+
+    const usageMB = (est.usage / (1024 * 1024)).toFixed(2);
+    const quotaMB = (est.quota / (1024 * 1024)).toFixed(0);
+    const pct = est.quota > 0 ? (est.usage / est.quota * 100) : 0;
+
+    el.innerHTML = `
+      <div style="font-size:14px;font-weight:600;margin-bottom:8px">已存储 ${taskCount} 条任务</div>
+      <div class="storage-meter"><div class="storage-meter-fill" style="width:${Math.min(pct, 100)}%"></div></div>
+      <div class="storage-label">${usageMB} MB / ${quotaMB} MB</div>`;
   }
 };

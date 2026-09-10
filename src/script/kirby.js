@@ -1,9 +1,15 @@
 const KirbyChat = {
+  _lastAddedTaskIds: [],
+
   init() {
     document.getElementById('kirby-send').addEventListener('click', () => this.send());
     const input = document.getElementById('kirby-input');
     input.addEventListener('keydown', e => {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.send(); }
+    });
+    input.addEventListener('input', () => {
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 100) + 'px';
     });
   },
 
@@ -12,6 +18,7 @@ const KirbyChat = {
     const text = input.value.trim();
     if (!text) return;
     input.value = '';
+    input.style.height = 'auto';
 
     const welcome = document.querySelector('.kirby-welcome');
     if (welcome) welcome.style.display = 'none';
@@ -25,109 +32,159 @@ const KirbyChat = {
 
     if (!apiUrl || !apiKey || !model) {
       this._hideLoading();
-      this._addMsg('请先在设置 > API 配置中填写 URL、Key 并选择模型。', 'ai');
+      this._addMsg('请先在 设置 → API 配置 中填写 URL、Key 并选择模型', 'ai');
       return;
     }
 
-    const systemPrompt = `你是一个日程助手叫卡比。用户会发给你一段文字（可能是从老师、领导、同事那复制的安排），请你从中提取日程信息。
+    const today = new Date().toISOString().slice(0, 10);
+    const dow = ['日','一','二','三','四','五','六'][new Date().getDay()];
+    const systemPrompt = `你是日程助手卡比。用户会发来一段安排文字，请提取日程信息。
 
-请严格按照以下JSON格式输出（不要输出其他内容）：
-{
-  "title": "事件标题",
-  "date": "YYYY-MM-DD",
-  "startTime": "HH:mm",
-  "endTime": "HH:mm",
-  "location": "地点",
-  "priority": 0-3,
-  "note": "备注"
-}
+严格输出JSON（不要输出其他内容）：
+{"title":"标题","date":"YYYY-MM-DD","startTime":"HH:mm","endTime":"HH:mm","location":"地点","priority":0,"note":"备注"}
 
-priority: 0=无, 1=低, 2=中, 3=高
-如果信息中没有的字段填空字符串，date如果只有相对日期（如明天、下周一）请根据今天是${new Date().toISOString().slice(0,10)}来计算。如果有多个事件，输出JSON数组。`;
+priority: 0=无,1=低,2=中,3=高
+没有的字段填空字符串。今天是${today}(周${dow})，请据此计算相对日期。多个事件输出JSON数组。`;
 
     try {
       const resp = await fetch(apiUrl + '/chat/completions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + apiKey
-        },
-        body: JSON.stringify({
-          model: model,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: text }
-          ],
-          temperature: 0.3
-        })
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+        body: JSON.stringify({ model, messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: text }], temperature: 0.3 })
       });
-
-      if (!resp.ok) throw new Error('API 请求失败: ' + resp.status);
+      if (!resp.ok) throw new Error('API ' + resp.status);
       const data = await resp.json();
       const content = data.choices[0].message.content;
       this._hideLoading();
-      this._handleAIResponse(content);
+      this._handleResponse(content);
     } catch (err) {
       this._hideLoading();
       this._addMsg('出错了: ' + err.message, 'ai');
     }
   },
 
-  _handleAIResponse(content) {
+  _handleResponse(content) {
     let parsed;
     try {
-      const jsonMatch = content.match(/\[[\s\S]*\]|\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('no json');
-      parsed = JSON.parse(jsonMatch[0]);
+      const m = content.match(/\[[\s\S]*\]|\{[\s\S]*\}/);
+      if (!m) throw new Error();
+      parsed = JSON.parse(m[0]);
       if (!Array.isArray(parsed)) parsed = [parsed];
     } catch {
       this._addMsg(content, 'ai');
       return;
     }
 
-    parsed.forEach(item => {
-      const msgEl = document.createElement('div');
-      msgEl.className = 'kirby-msg ai';
+    parsed.forEach(item => this._showReviewCard(item));
+  },
 
-      let html = '<div class="parsed-task">';
-      const fields = [
-        ['标题', item.title],
-        ['日期', item.date],
-        ['时间', (item.startTime || '') + (item.endTime ? ' - ' + item.endTime : '')],
-        ['地点', item.location],
-        ['优先级', ['无','低','中','高'][item.priority || 0]],
-        ['备注', item.note]
-      ];
-      fields.forEach(([label, val]) => {
-        if (val) html += `<div class="parsed-field"><span class="label">${label}</span><span>${val}</span></div>`;
+  _showReviewCard(item) {
+    const wrap = document.createElement('div');
+    wrap.className = 'kirby-msg ai';
+
+    const fields = [
+      { key: 'title', label: '标题', val: item.title || '' },
+      { key: 'date', label: '日期', val: item.date || '' },
+      { key: 'startTime', label: '开始', val: item.startTime || '' },
+      { key: 'endTime', label: '结束', val: item.endTime || '' },
+      { key: 'location', label: '地点', val: item.location || '' },
+      { key: 'priority', label: '优先级', val: String(item.priority || 0) },
+      { key: 'note', label: '备注', val: item.note || '' }
+    ];
+
+    let isEditing = false;
+
+    const renderCard = (editable) => {
+      let html = `<div class="review-card"><div class="review-title">${editable ? '编辑日程' : '提取结果'}</div>`;
+      fields.forEach(f => {
+        html += `<div class="review-field">
+          <span class="rf-label">${f.label}</span>
+          ${editable
+            ? `<input class="rf-input" data-key="${f.key}" value="${f.val}" />`
+            : `<span class="rf-value">${f.key === 'priority' ? ['无','低','中','高'][+f.val] : (f.val || '—')}</span>`
+          }
+        </div>`;
       });
-      html += '</div>';
-      html += '<button class="add-to-cal-btn">添加到日程</button>';
-      msgEl.innerHTML = html;
+      html += `<div class="review-actions">`;
+      if (editable) {
+        html += `<button class="review-confirm" data-action="save">保存</button>`;
+        html += `<button class="review-edit" data-action="cancel">取消</button>`;
+      } else {
+        html += `<button class="review-confirm" data-action="add">添加到日程</button>`;
+        html += `<button class="review-edit" data-action="edit">编辑</button>`;
+      }
+      html += `</div></div>`;
+      return html;
+    };
 
-      msgEl.querySelector('.add-to-cal-btn').addEventListener('click', () => {
-        const colors = [
-          'var(--color-1)','var(--color-2)','var(--color-3)','var(--color-4)','var(--color-5)',
-          'var(--color-6)','var(--color-7)','var(--color-8)','var(--color-9)','var(--color-10)'
-        ];
-        Store.addTask({
-          title: item.title || '未命名任务',
-          date: item.date || '',
-          startTime: item.startTime || '',
-          endTime: item.endTime || '',
-          location: item.location || '',
-          priority: item.priority || 0,
-          note: item.note || '',
-          color: colors[Math.floor(Math.random() * colors.length)]
+    const update = () => {
+      wrap.innerHTML = renderCard(isEditing);
+      wrap.querySelectorAll('[data-action]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const action = btn.dataset.action;
+          if (action === 'edit') {
+            isEditing = true;
+            update();
+          } else if (action === 'cancel') {
+            isEditing = false;
+            update();
+          } else if (action === 'save') {
+            wrap.querySelectorAll('.rf-input').forEach(inp => {
+              const f = fields.find(f => f.key === inp.dataset.key);
+              if (f) f.val = inp.value;
+            });
+            isEditing = false;
+            update();
+          } else if (action === 'add') {
+            this._addTaskFromReview(fields, wrap);
+          }
         });
-        msgEl.querySelector('.add-to-cal-btn').textContent = '已添加';
-        msgEl.querySelector('.add-to-cal-btn').disabled = true;
-        msgEl.querySelector('.add-to-cal-btn').style.opacity = '0.5';
       });
+    };
 
-      document.getElementById('kirby-messages').appendChild(msgEl);
-      this._scrollToBottom();
+    update();
+    document.getElementById('kirby-messages').appendChild(wrap);
+    this._scrollBottom();
+  },
+
+  _addTaskFromReview(fields, wrap) {
+    const colors = Array.from({ length: 10 }, (_, i) => `var(--color-${i + 1})`);
+    const data = {};
+    fields.forEach(f => { data[f.key] = f.val; });
+
+    const task = Store.addTask({
+      title: data.title || '未命名',
+      date: data.date || '',
+      startTime: data.startTime || '',
+      endTime: data.endTime || '',
+      location: data.location || '',
+      priority: parseInt(data.priority) || 0,
+      note: data.note || '',
+      color: colors[Math.floor(Math.random() * colors.length)]
     });
+
+    this._lastAddedTaskIds.push(task.id);
+
+    wrap.innerHTML = `
+      <div class="review-card" style="text-align:center;padding:16px">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="margin:0 auto 8px"><circle cx="12" cy="12" r="10" fill="var(--green)" opacity="0.15"/><path d="M8 12l3 3 5-5" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg>
+        <div style="font-weight:600;margin-bottom:4px">已添加</div>
+        <div style="font-size:13px;color:var(--text-secondary)">${data.title}</div>
+      </div>`;
+
+    const undo = document.createElement('div');
+    undo.className = 'undo-banner';
+    undo.innerHTML = `<span>已添加日程</span><button data-undo="true">撤回</button>`;
+    undo.querySelector('[data-undo]').addEventListener('click', () => {
+      Store.deleteTask(task.id);
+      this._lastAddedTaskIds.pop();
+      undo.remove();
+      wrap.innerHTML = `<div class="review-card" style="text-align:center;padding:16px;color:var(--text-secondary)">已撤回</div>`;
+    });
+    document.getElementById('kirby-messages').appendChild(undo);
+    this._scrollBottom();
+
+    setTimeout(() => { if (undo.parentElement) undo.remove(); }, 8000);
   },
 
   _addMsg(text, role) {
@@ -135,7 +192,7 @@ priority: 0=无, 1=低, 2=中, 3=高
     el.className = 'kirby-msg ' + role;
     el.textContent = text;
     document.getElementById('kirby-messages').appendChild(el);
-    this._scrollToBottom();
+    this._scrollBottom();
   },
 
   _showLoading() {
@@ -144,7 +201,7 @@ priority: 0=无, 1=低, 2=中, 3=高
     el.id = 'kirby-loading';
     el.innerHTML = '<span></span><span></span><span></span>';
     document.getElementById('kirby-messages').appendChild(el);
-    this._scrollToBottom();
+    this._scrollBottom();
   },
 
   _hideLoading() {
@@ -152,8 +209,8 @@ priority: 0=无, 1=低, 2=中, 3=高
     if (el) el.remove();
   },
 
-  _scrollToBottom() {
-    const chat = document.getElementById('kirby-chat');
-    chat.scrollTop = chat.scrollHeight;
+  _scrollBottom() {
+    const c = document.getElementById('kirby-chat');
+    c.scrollTop = c.scrollHeight;
   }
 };

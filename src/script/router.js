@@ -11,6 +11,7 @@ const Router = {
     this.currentTab = tab;
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
+
     const panel = document.getElementById('tab-' + tab);
     if (panel) panel.classList.add('active');
     const btn = document.querySelector(`.tab-item[data-tab="${tab}"]`);
@@ -18,10 +19,10 @@ const Router = {
 
     if (tab === 'calendar') CalendarView.render();
     if (tab === 'tasks') TasksView.render();
-    this.updateHeader(tab);
+    this._updateHeader(tab);
   },
 
-  updateHeader(tab) {
+  _updateHeader(tab) {
     const title = document.getElementById('header-title');
     const addBtn = document.getElementById('btn-add-task');
     const todayBtn = document.getElementById('btn-today');

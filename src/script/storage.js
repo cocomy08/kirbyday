@@ -1,66 +1,181 @@
 const Store = {
-  _data: null,
+  _db: null,
+  _cache: { tasks: [], settings: null },
 
   _defaults: {
-    tasks: [],
-    settings: {
-      weekStart: 1,
-      defaultView: 'week',
-      reminder: 15,
-      darkMode: false,
-      showLunar: true,
-      showHolidays: true,
-      showWeekNum: false,
-      theme: 'default',
-      apiUrl: '',
-      apiKey: '',
-      model: ''
-    }
+    weekStart: 1,
+    defaultView: 'week',
+    reminder: 15,
+    darkMode: false,
+    showLunar: true,
+    showHolidays: true,
+    showWeekNum: false,
+    theme: 'default',
+    apiUrl: '',
+    apiKey: '',
+    model: ''
   },
 
   init() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open('kirbyday', 2);
+      req.onupgradeneeded = e => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('tasks')) {
+          db.createObjectStore('tasks', { keyPath: 'id' });
+        }
+        if (!db.objectStoreNames.contains('settings')) {
+          db.createObjectStore('settings', { keyPath: 'key' });
+        }
+      };
+      req.onsuccess = async e => {
+        this._db = e.target.result;
+        await this._loadCache();
+        this._migrateLegacy();
+        resolve();
+      };
+      req.onerror = () => reject(req.error);
+    });
+  },
+
+  _migrateLegacy() {
     try {
       const raw = localStorage.getItem('kirbyday');
-      this._data = raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(this._defaults));
-    } catch {
-      this._data = JSON.parse(JSON.stringify(this._defaults));
-    }
-    if (!this._data.settings) this._data.settings = { ...this._defaults.settings };
-    if (!this._data.tasks) this._data.tasks = [];
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (data.tasks && data.tasks.length && this._cache.tasks.length === 0) {
+        data.tasks.forEach(t => this.addTask(t));
+      }
+      if (data.settings) {
+        Object.entries(data.settings).forEach(([k, v]) => {
+          if (this._cache.settings[k] === undefined || this._cache.settings[k] === this._defaults[k]) {
+            this.setSetting(k, v);
+          }
+        });
+      }
+      localStorage.removeItem('kirbyday');
+    } catch {}
   },
 
-  _save() {
-    localStorage.setItem('kirbyday', JSON.stringify(this._data));
+  async _loadCache() {
+    this._cache.tasks = await this._getAll('tasks');
+    const settingsArr = await this._getAll('settings');
+    this._cache.settings = { ...this._defaults };
+    settingsArr.forEach(s => { this._cache.settings[s.key] = s.value; });
   },
 
-  getTasks() { return this._data.tasks; },
+  _getAll(store) {
+    return new Promise((resolve, reject) => {
+      const tx = this._db.transaction(store, 'readonly');
+      const req = tx.objectStore(store).getAll();
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  },
+
+  _put(store, data) {
+    return new Promise((resolve, reject) => {
+      const tx = this._db.transaction(store, 'readwrite');
+      tx.objectStore(store).put(data);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  },
+
+  _delete(store, key) {
+    return new Promise((resolve, reject) => {
+      const tx = this._db.transaction(store, 'readwrite');
+      tx.objectStore(store).delete(key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  },
+
+  _clear(store) {
+    return new Promise((resolve, reject) => {
+      const tx = this._db.transaction(store, 'readwrite');
+      tx.objectStore(store).clear();
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  },
+
+  getTasks() { return this._cache.tasks; },
 
   addTask(task) {
-    task.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-    task.done = false;
-    task.createdAt = new Date().toISOString();
-    this._data.tasks.push(task);
-    this._save();
+    if (!task.id) {
+      task.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    }
+    if (task.done === undefined) task.done = false;
+    if (!task.createdAt) task.createdAt = new Date().toISOString();
+    if (!task.order) task.order = this._cache.tasks.length;
+    this._cache.tasks.push(task);
+    this._put('tasks', task);
     return task;
   },
 
   updateTask(id, updates) {
-    const t = this._data.tasks.find(t => t.id === id);
-    if (t) { Object.assign(t, updates); this._save(); }
+    const t = this._cache.tasks.find(t => t.id === id);
+    if (t) {
+      Object.assign(t, updates);
+      this._put('tasks', t);
+    }
     return t;
   },
 
   deleteTask(id) {
-    this._data.tasks = this._data.tasks.filter(t => t.id !== id);
-    this._save();
+    this._cache.tasks = this._cache.tasks.filter(t => t.id !== id);
+    this._delete('tasks', id);
   },
 
-  getSetting(key) { return this._data.settings[key]; },
+  reorderTasks(ids) {
+    ids.forEach((id, i) => {
+      const t = this._cache.tasks.find(t => t.id === id);
+      if (t) { t.order = i; this._put('tasks', t); }
+    });
+    this._cache.tasks.sort((a, b) => (a.order || 0) - (b.order || 0));
+  },
+
+  getSetting(key) { return this._cache.settings[key]; },
 
   setSetting(key, val) {
-    this._data.settings[key] = val;
-    this._save();
+    this._cache.settings[key] = val;
+    this._put('settings', { key, value: val });
   },
 
-  getSettings() { return { ...this._data.settings }; }
+  getSettings() { return { ...this._cache.settings }; },
+
+  async exportData() {
+    const tasks = this.getTasks();
+    const settings = this.getSettings();
+    return JSON.stringify({ version: 2, tasks, settings, exportedAt: new Date().toISOString() });
+  },
+
+  async importData(jsonStr) {
+    const data = JSON.parse(jsonStr);
+    await this._clear('tasks');
+    await this._clear('settings');
+    this._cache.tasks = [];
+    this._cache.settings = { ...this._defaults };
+    if (data.tasks) {
+      for (const t of data.tasks) {
+        await this._put('tasks', t);
+        this._cache.tasks.push(t);
+      }
+    }
+    if (data.settings) {
+      for (const [k, v] of Object.entries(data.settings)) {
+        await this._put('settings', { key: k, value: v });
+        this._cache.settings[k] = v;
+      }
+    }
+  },
+
+  async getStorageEstimate() {
+    if (navigator.storage && navigator.storage.estimate) {
+      const est = await navigator.storage.estimate();
+      return { usage: est.usage || 0, quota: est.quota || 0 };
+    }
+    return { usage: 0, quota: 0 };
+  }
 };

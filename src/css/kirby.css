@@ -9,7 +9,7 @@
 .kirby-chat {
   flex: 1;
   overflow-y: auto;
-  padding: 12px;
+  padding: 16px;
 }
 
 .kirby-welcome {
@@ -17,105 +17,179 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 60px 24px;
   text-align: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .kirby-welcome h2 {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
   color: var(--text);
+  letter-spacing: -0.3px;
 }
 
 .kirby-welcome p {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-secondary);
 }
 
 .kirby-hint {
-  font-size: 12px;
-  color: var(--text-muted);
-  padding: 4px 10px;
-  background: var(--bg-secondary);
-  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text-tertiary);
+  padding: 6px 14px;
+  background: var(--bg);
+  border-radius: 20px;
 }
 
 .kirby-messages {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .kirby-msg {
-  max-width: 85%;
-  padding: 10px 14px;
-  font-size: 13px;
+  max-width: 82%;
+  padding: 12px 16px;
+  font-size: 15px;
   line-height: 1.5;
-  border-radius: var(--radius);
   word-break: break-word;
+  animation: msgIn 300ms cubic-bezier(0.32,0.72,0,1);
+}
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .kirby-msg.user {
   align-self: flex-end;
   background: var(--accent);
   color: #fff;
+  border-radius: 20px 20px 6px 20px;
 }
 
 .kirby-msg.ai {
   align-self: flex-start;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
+  background: var(--bg-card);
   color: var(--text);
+  border-radius: 20px 20px 20px 6px;
+  box-shadow: var(--shadow-card);
 }
 
-.kirby-msg.ai .parsed-task {
-  margin-top: 8px;
-  padding: 8px;
+/* Review card */
+.review-card {
+  margin-top: 10px;
   background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  font-size: 12px;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  animation: msgIn 300ms cubic-bezier(0.32,0.72,0,1);
 }
 
-.kirby-msg.ai .parsed-field {
+.review-card .review-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.review-field {
   display: flex;
   gap: 6px;
-  padding: 2px 0;
+  padding: 6px 0;
+  border-bottom: 0.5px solid var(--separator);
+  align-items: center;
 }
 
-.kirby-msg.ai .parsed-field .label {
-  font-weight: 600;
-  color: var(--text-secondary);
-  min-width: 45px;
-}
+.review-field:last-of-type { border-bottom: none; }
 
-.kirby-msg.ai .add-to-cal-btn {
-  margin-top: 8px;
-  padding: 6px 14px;
-  background: var(--green);
-  color: #fff;
-  border: 1px solid #1b7f37;
-  border-radius: var(--radius);
+.review-field .rf-label {
   font-size: 12px;
   font-weight: 600;
-  box-shadow: var(--shadow-sm);
-  transition: background 150ms;
+  color: var(--text-secondary);
+  min-width: 40px;
 }
 
-.kirby-msg.ai .add-to-cal-btn:active { background: #1a7c35; }
+.review-field .rf-value {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text);
+  min-width: 0;
+}
+
+.review-field .rf-input {
+  flex: 1;
+  padding: 6px 10px;
+  background: var(--bg-card);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  min-width: 0;
+}
+
+.review-field .rf-input:focus {
+  box-shadow: 0 0 0 2px var(--accent-light);
+}
+
+.review-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.review-actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 200ms ease;
+}
+
+.review-actions .review-confirm {
+  background: var(--accent);
+  color: #fff;
+}
+
+.review-actions .review-confirm:active { opacity: 0.85; }
+
+.review-actions .review-edit {
+  background: var(--bg-card);
+  color: var(--accent);
+}
+
+.undo-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--text);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  margin-top: 8px;
+  font-size: 14px;
+  animation: msgIn 300ms ease;
+}
+
+.undo-banner button {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 14px;
+}
 
 .kirby-msg.loading {
   display: flex;
-  gap: 4px;
-  padding: 12px 16px;
+  gap: 5px;
+  padding: 14px 18px;
 }
 
 .kirby-msg.loading span {
-  width: 6px;
-  height: 6px;
-  background: var(--text-muted);
-  border-radius: 3px;
+  width: 7px;
+  height: 7px;
+  background: var(--text-tertiary);
+  border-radius: 50%;
   animation: bounce 1.4s infinite ease-in-out;
 }
 
@@ -130,42 +204,41 @@
 .kirby-input-area {
   display: flex;
   align-items: flex-end;
-  gap: 8px;
-  padding: 8px 12px;
-  border-top: 1px solid var(--border);
+  gap: 10px;
+  padding: 10px 16px;
   background: var(--bg);
   flex-shrink: 0;
 }
 
 .kirby-input {
   flex: 1;
-  padding: 8px 12px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  font-size: 14px;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: none;
+  border-radius: 22px;
+  font-size: 15px;
   resize: none;
   outline: none;
   max-height: 100px;
-  transition: border-color 150ms, box-shadow 150ms;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 250ms ease;
 }
 
 .kirby-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(9,105,218,0.3);
+  box-shadow: var(--shadow-card), 0 0 0 2px var(--accent-light);
 }
 
 .kirby-send-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--accent);
   color: #fff;
-  border-radius: var(--radius);
+  border-radius: 50%;
   flex-shrink: 0;
-  transition: background 150ms;
+  transition: transform 200ms ease, opacity 200ms ease;
 }
 
-.kirby-send-btn:active { background: var(--accent-hover); }
+.kirby-send-btn:active { transform: scale(0.9); }
