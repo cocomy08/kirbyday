@@ -130,3 +130,141 @@ body.dark.theme-ocean {
   --text-secondary: #7dd3fc;
   --text-tertiary: #2b5f8a;
 }
+
+/* ═══════════════════════════════════════
+   Theme: Kirby（卡比粉）
+   ═══════════════════════════════════════ */
+body.theme-kirby {
+  --bg: #fff0f6;
+  --bg-card: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-input: #fde7ef;
+  --bg-hover: rgba(255, 92, 138, 0.08);
+  --bg-active: rgba(255, 92, 138, 0.14);
+  --text: #3d1f2c;
+  --text-secondary: #8a5a6b;
+  --text-tertiary: #c9a0ae;
+  --accent: #ff5c8a;
+  --accent-hover: #f04a7b;
+  --accent-light: rgba(255, 92, 138, 0.12);
+  --green: #34c759;
+  --orange: #ff9500;
+  --red: #ff3b30;
+  --yellow: #ffcc00;
+  --separator: rgba(255, 92, 138, 0.10);
+  --border: rgba(255, 92, 138, 0.16);
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 30px;
+  --shadow-sm: 0 4px 12px rgba(255, 92, 138, 0.08);
+  --shadow-md: 0 8px 24px rgba(255, 92, 138, 0.12);
+  --transition-fast: 150ms var(--ease-spring);
+  --transition-normal: 240ms var(--ease-spring);
+  --transition-smooth: 340ms var(--ease-spring);
+  background-image:
+    radial-gradient(circle at 12% 6%, rgba(255, 92, 138, 0.10), transparent 40%),
+    radial-gradient(circle at 90% 94%, rgba(255, 92, 138, 0.08), transparent 42%);
+  background-attachment: fixed;
+}
+
+/* 星形 checkbox */
+body.theme-kirby .task-checkbox {
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 0;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  background: var(--bg-input);
+}
+body.theme-kirby .task-checkbox.checked { background: var(--accent); color: #fff; }
+
+body.dark.theme-kirby {
+  --bg: #2a1220;
+  --bg-card: #3a1a2a;
+  --bg-input: #4a2335;
+  --text: #ffe3ee;
+  --text-secondary: #dba0b5;
+  --text-tertiary: #8a5a6b;
+  --accent: #ff7aa3;
+  --separator: rgba(255, 122, 163, 0.14);
+  --border: rgba(255, 122, 163, 0.20);
+}
+
+/* ═══════════════════════════════════════
+   Theme: Animal（动森 / animal-island）
+   ═══════════════════════════════════════ */
+body.theme-animal {
+  --bg: #fdf3e3;
+  --bg-card: #fffdf7;
+  --bg-elevated: #fffdf7;
+  --bg-input: #f6ecda;
+  --bg-hover: rgba(61, 52, 40, 0.06);
+  --bg-active: rgba(61, 52, 40, 0.10);
+  --text: #3d3028;
+  --text-secondary: #725d42;
+  --text-tertiary: #9a835a;
+  --accent: #19c8b9;
+  --accent-hover: #0ec4b6;
+  --accent-light: rgba(25, 200, 185, 0.14);
+  --green: #6fba2c;
+  --orange: #e59266;
+  --red: #e05a5a;
+  --yellow: #f5c31c;
+  --separator: rgba(61, 52, 40, 0.12);
+  --border: #e8dcc8;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --shadow-xs: none;
+  --shadow-sm: 0 2px 4px rgba(61, 52, 40, 0.06);
+  --shadow-md: 0 4px 12px rgba(61, 52, 40, 0.08);
+  --shadow-lg: 0 8px 24px rgba(61, 52, 40, 0.12);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 150ms var(--ease-standard);
+  --transition-normal: 220ms var(--ease-standard);
+  --transition-smooth: 320ms var(--ease-standard);
+  font-family: ui-rounded, "SF Pro Rounded", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+/* 药丸形输入/按钮，卡片去阴影改描边 */
+body.theme-animal .form-input,
+body.theme-animal .btn-primary,
+body.theme-animal .btn-secondary {
+  border-radius: var(--radius-full);
+}
+body.theme-animal .task-card,
+body.theme-animal .settings-card {
+  box-shadow: none;
+  border: 1px solid var(--border);
+}
+/* 主按钮 3D 堆叠阴影（仅 primary） */
+body.theme-animal .btn-primary {
+  box-shadow: 0 4px 0 0 #0e8f88;
+}
+body.theme-animal .btn-primary:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 0 #0e8f88;
+}
+/* 叶子形 checkbox */
+body.theme-animal .task-checkbox {
+  border-radius: 50% 50% 50% 0;
+  border-color: var(--accent);
+}
+body.theme-animal .task-checkbox.checked {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+body.dark.theme-animal {
+  --bg: #2b2118;
+  --bg-card: #3d3028;
+  --bg-input: #4a3b30;
+  --text: #f3e9d8;
+  --text-secondary: #c9b699;
+  --text-tertiary: #8f7b5f;
+  --separator: rgba(243, 233, 216, 0.12);
+  --border: #4a3b30;
+}

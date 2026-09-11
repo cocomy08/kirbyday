@@ -1,6 +1,8 @@
 const KirbyChat = {
   _lastAddedTaskIds: [],
 
+  _esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); },
+
   init() {
     document.getElementById('kirby-send').addEventListener('click', () => this.send());
     const input = document.getElementById('kirby-input');
@@ -101,8 +103,8 @@ priority: 0=无,1=低,2=中,3=高
         html += `<div class="review-field">
           <span class="rf-label">${f.label}</span>
           ${editable
-            ? `<input class="rf-input" data-key="${f.key}" value="${f.val}" />`
-            : `<span class="rf-value">${f.key === 'priority' ? ['无','低','中','高'][+f.val] : (f.val || '—')}</span>`
+            ? `<input class="rf-input" data-key="${f.key}" value="${this._esc(f.val)}" />`
+            : `<span class="rf-value">${f.key === 'priority' ? ['无','低','中','高'][+f.val] : this._esc(f.val || '—')}</span>`
           }
         </div>`;
       });
@@ -170,7 +172,7 @@ priority: 0=无,1=低,2=中,3=高
       <div class="review-card" style="text-align:center;padding:16px">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="margin:0 auto 8px"><circle cx="12" cy="12" r="10" fill="var(--green)" opacity="0.15"/><path d="M8 12l3 3 5-5" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg>
         <div style="font-weight:600;margin-bottom:4px">已添加</div>
-        <div style="font-size:13px;color:var(--text-secondary)">${data.title}</div>
+        <div style="font-size:13px;color:var(--text-secondary)">${this._esc(data.title)}</div>
       </div>`;
 
     const undo = document.createElement('div');

@@ -123,6 +123,24 @@ const Store = {
     return t;
   },
 
+  // 完成语义：重复任务推进到下一次，非重复任务翻转 done。
+  completeTask(id) {
+    const t = this._cache.tasks.find(t => t.id === id);
+    if (!t) return t;
+    if (t.repeat) {
+      const next = Recurrence.nextOccurrence(t.date, t.repeat, t.repeatInterval || 1, t.date);
+      if (!next || (t.repeatEnd && next > t.repeatEnd)) {
+        t.done = true;
+      } else {
+        t.date = next;
+      }
+    } else {
+      t.done = !t.done;
+    }
+    this._put('tasks', t);
+    return t;
+  },
+
   deleteTask(id) {
     this._cache.tasks = this._cache.tasks.filter(t => t.id !== id);
     this._delete('tasks', id);

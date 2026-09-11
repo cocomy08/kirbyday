@@ -70,7 +70,7 @@
   transition: all var(--transition-normal);
 }
 
-.task-checkbox.checked { background: var(--green); border-color: var(--green); }
+.task-checkbox.checked { background: var(--green); border-color: var(--green); color: #fff; }
 .task-checkbox.checked svg { display: block; }
 .task-checkbox svg { display: none; }
 
@@ -101,6 +101,19 @@
 .priority-1 { background: var(--accent); }
 .priority-2 { background: var(--orange); }
 .priority-3 { background: var(--red); }
+
+.task-repeat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 11px;
+}
+.task-repeat-badge .icon { flex-shrink: 0; }
 
 .task-actions { display: flex; gap: 2px; flex-shrink: 0; }
 

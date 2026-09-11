@@ -24,6 +24,8 @@ const App = {
     this._initColorPicker();
     this._initModal();
     this._initToday();
+    this._initMascot();
+    this._initHeaderScroll();
     Router.switchTab('tasks');
 
     if ('serviceWorker' in navigator) {
@@ -80,15 +82,23 @@ const App = {
     document.getElementById('modal-close').addEventListener('click', () => {
       modal.classList.add('hidden');
       form.reset();
+      this._resetRepeatForm();
       document.getElementById('task-edit-id').value = '';
       document.getElementById('task-delete-btn').classList.add('hidden');
       document.getElementById('modal-task-title').textContent = '新建任务';
+    });
+
+    document.getElementById('task-repeat').addEventListener('change', e => {
+      const on = !!e.target.value;
+      document.getElementById('repeat-options').classList.toggle('hidden', !on);
+      document.getElementById('repeat-end-row').classList.toggle('hidden', !on);
     });
 
     modal.addEventListener('click', e => {
       if (e.target === modal) {
         modal.classList.add('hidden');
         form.reset();
+        this._resetRepeatForm();
         document.getElementById('task-edit-id').value = '';
       }
     });
@@ -96,6 +106,7 @@ const App = {
     form.addEventListener('submit', e => {
       e.preventDefault();
       const editId = document.getElementById('task-edit-id').value;
+      const repeat = document.getElementById('task-repeat').value;
       const data = {
         title: document.getElementById('task-title').value.trim(),
         note: document.getElementById('task-note').value.trim(),
@@ -104,7 +115,10 @@ const App = {
         endTime: document.getElementById('task-end').value,
         priority: parseInt(document.getElementById('task-priority').value),
         location: document.getElementById('task-location').value.trim(),
-        color: this.selectedColor
+        color: this.selectedColor,
+        repeat: repeat || '',
+        repeatInterval: repeat ? (parseInt(document.getElementById('task-repeat-interval').value) || 1) : 1,
+        repeatEnd: repeat ? document.getElementById('task-repeat-end').value : ''
       };
       if (!data.title) return;
 
@@ -116,6 +130,7 @@ const App = {
 
       modal.classList.add('hidden');
       form.reset();
+      this._resetRepeatForm();
       document.getElementById('task-edit-id').value = '';
       document.getElementById('task-delete-btn').classList.add('hidden');
       TasksView.render();
@@ -146,6 +161,7 @@ const App = {
       `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
     this.selectedColor = TASK_COLORS[4].value;
     document.querySelectorAll('.color-dot').forEach((d, i) => d.classList.toggle('active', i === 4));
+    this._resetRepeatForm();
     modal.classList.remove('hidden');
     document.getElementById('task-title').focus();
   },
@@ -171,11 +187,39 @@ const App = {
       d.classList.toggle('active', d.style.background === this.selectedColor);
     });
 
+    const repeat = task.repeat || '';
+    document.getElementById('task-repeat').value = repeat;
+    document.getElementById('task-repeat-interval').value = task.repeatInterval || 1;
+    document.getElementById('task-repeat-end').value = task.repeatEnd || '';
+    document.getElementById('repeat-options').classList.toggle('hidden', !repeat);
+    document.getElementById('repeat-end-row').classList.toggle('hidden', !repeat);
+
     modal.classList.remove('hidden');
   },
 
   _initToday() {
     document.getElementById('btn-today').addEventListener('click', () => CalendarView.goToday());
+  },
+
+  _initMascot() {
+    const el = document.getElementById('kirby-mascot');
+    if (el) el.innerHTML = Mascot.kirby('welcome', 96);
+  },
+
+  _initHeaderScroll() {
+    const main = document.getElementById('app-main');
+    const header = document.getElementById('app-header');
+    main.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', main.scrollTop > 12);
+    }, { passive: true });
+  },
+
+  _resetRepeatForm() {
+    document.getElementById('task-repeat').value = '';
+    document.getElementById('task-repeat-interval').value = 1;
+    document.getElementById('task-repeat-end').value = '';
+    document.getElementById('repeat-options').classList.add('hidden');
+    document.getElementById('repeat-end-row').classList.add('hidden');
   },
 
   _showUpdateToast(worker) {

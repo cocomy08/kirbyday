@@ -20,7 +20,7 @@ const TasksView = {
     if (tasks.length === 0) {
       list.innerHTML = `
         <div class="empty-state">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="8" y="6" width="32" height="36" rx="6" stroke="var(--text-tertiary)" stroke-width="1.5"/><path d="M16 18h16M16 26h10" stroke="var(--text-tertiary)" stroke-width="1.5" stroke-linecap="round"/></svg>
+          ${Mascot.kirby('thinking', 56)}
           <p>暂无任务</p>
           <span>点击右上角 + 添加新任务</span>
         </div>`;
@@ -83,10 +83,10 @@ const TasksView = {
 
       const checkbox = document.createElement('div');
       checkbox.className = 'task-checkbox' + (task.done ? ' checked' : '');
-      checkbox.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>';
+      checkbox.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-check"/></svg>';
       checkbox.addEventListener('click', e => {
         e.stopPropagation();
-        Store.updateTask(task.id, { done: !task.done });
+        Store.completeTask(task.id);
         this.render();
       });
 
@@ -102,13 +102,31 @@ const TasksView = {
       meta.className = 'task-card-meta';
       if (task.date) {
         const [, m, d] = task.date.split('-');
-        meta.innerHTML += `<span>${+m}月${+d}日</span>`;
+        const s = document.createElement('span');
+        s.textContent = `${+m}月${+d}日`;
+        meta.appendChild(s);
       }
       if (task.startTime) {
-        meta.innerHTML += `<span>${task.startTime}${task.endTime ? '-' + task.endTime : ''}</span>`;
+        const s = document.createElement('span');
+        s.textContent = task.startTime + (task.endTime ? '-' + task.endTime : '');
+        meta.appendChild(s);
       }
-      if (task.location) meta.innerHTML += `<span>${task.location}</span>`;
-      if (task.priority > 0) meta.innerHTML += `<span class="priority-dot priority-${task.priority}"></span>`;
+      if (task.location) {
+        const s = document.createElement('span');
+        s.textContent = task.location;
+        meta.appendChild(s);
+      }
+      if (task.repeat) {
+        const s = document.createElement('span');
+        s.className = 'task-repeat-badge';
+        s.innerHTML = Icon('repeat', 12) + Recurrence.label(task.repeat, task.repeatInterval);
+        meta.appendChild(s);
+      }
+      if (task.priority > 0) {
+        const s = document.createElement('span');
+        s.className = 'priority-dot priority-' + task.priority;
+        meta.appendChild(s);
+      }
       body.appendChild(meta);
 
       const actions = document.createElement('div');
@@ -116,12 +134,12 @@ const TasksView = {
 
       const editBtn = document.createElement('button');
       editBtn.className = 'task-action-btn';
-      editBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5l2 2-8 8H3.5v-2l8-8z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>';
+      editBtn.innerHTML = Icon('edit', 16);
       editBtn.addEventListener('click', e => { e.stopPropagation(); App.openEditTask(task.id); });
 
       const delBtn = document.createElement('button');
       delBtn.className = 'task-action-btn';
-      delBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>';
+      delBtn.innerHTML = Icon('trash', 16);
       delBtn.addEventListener('click', e => { e.stopPropagation(); Store.deleteTask(task.id); this.render(); });
 
       actions.appendChild(editBtn);

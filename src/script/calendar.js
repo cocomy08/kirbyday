@@ -89,7 +89,13 @@ const CalendarView = {
   _p(n) { return n < 10 ? '0' + n : '' + n; },
   _ds(d) { return `${d.getFullYear()}-${this._p(d.getMonth()+1)}-${this._p(d.getDate())}`; },
   _isToday(d) { return this._ds(d) === this._ds(new Date()); },
-  _tasksFor(ds) { return Store.getTasks().filter(t => t.date === ds && !t.done); },
+  _tasksFor(ds) {
+    return Store.getTasks().filter(t => {
+      if (t.done) return false;
+      if (t.repeat) return Recurrence.occursOn(t, ds);
+      return t.date === ds;
+    });
+  },
 
   _renderMonth(container) {
     const ws = Store.getSetting('weekStart') || 1;
@@ -199,12 +205,23 @@ const CalendarView = {
         tasks.forEach(t => {
           const item = document.createElement('div');
           item.className = 'day-expand-item';
-          item.innerHTML = `
-            <div class="de-color" style="background:${t.color || 'var(--accent)'}"></div>
-            <div class="de-info">
-              <div class="de-title">${t.title}</div>
-              <div class="de-time">${t.startTime ? t.startTime + (t.endTime ? ' - ' + t.endTime : '') : '全天'}${t.location ? ' · ' + t.location : ''}</div>
-            </div>`;
+
+          const color = document.createElement('div');
+          color.className = 'de-color';
+          color.style.background = t.color || 'var(--accent)';
+          const info = document.createElement('div');
+          info.className = 'de-info';
+          const title = document.createElement('div');
+          title.className = 'de-title';
+          title.textContent = t.title;
+          const time = document.createElement('div');
+          time.className = 'de-time';
+          time.textContent = (t.startTime ? t.startTime + (t.endTime ? ' - ' + t.endTime : '') : '全天') + (t.location ? ' · ' + t.location : '');
+          info.appendChild(title);
+          info.appendChild(time);
+          item.appendChild(color);
+          item.appendChild(info);
+
           item.addEventListener('click', () => App.openEditTask(t.id));
           list.appendChild(item);
         });
@@ -252,8 +269,15 @@ const CalendarView = {
           item.className = 'wl-task-item';
           item.style.background = t.color || 'var(--color-5)';
           item.style.color = '#1c1c1e';
-          const timeStr = t.startTime ? `<span class="wl-time">${t.startTime}</span>` : '';
-          item.innerHTML = `${timeStr}<span>${t.title}</span>`;
+          if (t.startTime) {
+            const tm = document.createElement('span');
+            tm.className = 'wl-time';
+            tm.textContent = t.startTime;
+            item.appendChild(tm);
+          }
+          const tt = document.createElement('span');
+          tt.textContent = t.title;
+          item.appendChild(tt);
           item.addEventListener('click', () => App.openEditTask(t.id));
           taskWrap.appendChild(item);
         });

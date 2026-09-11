@@ -19,14 +19,44 @@
   <link rel="stylesheet" href="src/css/themes.css">
 </head>
 <body>
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-add" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L18.5 9.5a2.12 2.12 0 0 0-3-3L5 17v3z"/><path d="M13.5 6.5l3 3"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></symbol>
+    <symbol id="i-tasks" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8 12l2.5 2.5L16 9"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5.64 5.64l2.12 2.12M16.24 16.24l2.12 2.12M5.64 18.36l2.12-2.12M16.24 7.76l2.12-2.12"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 5.58 2 10c0 2.4 1.34 4.54 3.42 6.02-.12 1.6-.72 3.1-1.42 3.98 2.1 0 4.18-.86 5.48-1.84.8.12 1.64.18 2.52.18 5.52 0 10-3.58 10-8S17.52 2 12 2z"/><path d="M8 10.5v3M10.5 9v5M13 8v7M15.5 9.5v4M18 10.5v2"/></symbol>
+    <symbol id="i-today" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v3M16 3v3"/><circle cx="12" cy="15" r="1.3" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></symbol>
+    <symbol id="i-repeat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+    <symbol id="i-location" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h8l10 10-8 8L3 11V3z"/><circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9M7 14l5-5 5 5"/><path d="M4 3h16"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></symbol>
+  </svg>
   <header id="app-header" class="app-header">
-    <div class="header-left">
-      <button id="btn-today" class="header-btn hidden" aria-label="今天">今天</button>
+    <div class="header-title-block">
+      <h1 id="header-title" class="header-title">任务</h1>
+      <p id="header-subtitle" class="header-subtitle"></p>
     </div>
-    <h1 id="header-title" class="header-title">任务</h1>
-    <div class="header-right">
-      <button id="btn-add-task" class="icon-btn" aria-label="添加任务">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 4v14M4 11h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <div class="header-actions">
+      <button id="btn-today" class="header-btn hidden" aria-label="今天">今天</button>
+      <button id="btn-add-task" class="header-add" aria-label="添加任务">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="#i-add"/></svg>
       </button>
     </div>
   </header>
@@ -59,7 +89,7 @@
     <section id="tab-kirby" class="tab-panel">
       <div id="kirby-chat" class="kirby-chat">
         <div class="kirby-welcome">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="28" fill="var(--bg)" stroke="var(--separator)" stroke-width="1.5"/><circle cx="24" cy="28" r="3.5" fill="var(--text)"/><circle cx="40" cy="28" r="3.5" fill="var(--text)"/><path d="M23 38c2.5 5 6.5 7 9 7s6.5-2 9-7" stroke="var(--text)" stroke-width="2" stroke-linecap="round"/></svg>
+          <div class="kirby-mascot" id="kirby-mascot"></div>
           <h2>你好，我是卡比!</h2>
           <p>发给我一段安排文字，我帮你提取成日程</p>
           <p class="kirby-hint">请先在设置中配置 API</p>
@@ -82,24 +112,24 @@
           <div class="settings-card">
             <div class="settings-item" data-setting="general">
               <div class="settings-item-left">
-                <div class="si-icon blue"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+                <div class="si-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clock"/></svg></div>
                 <span>通用设置</span>
               </div>
-              <svg class="chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>
             </div>
             <div class="settings-item" data-setting="theme">
               <div class="settings-item-left">
-                <div class="si-icon purple"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M3 10h14M10 3v14" stroke="currentColor" stroke-width="1.5"/></svg></div>
+                <div class="si-icon purple"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sun"/></svg></div>
                 <span>主题</span>
               </div>
-              <svg class="chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>
             </div>
             <div class="settings-item" data-setting="display">
               <div class="settings-item-left">
-                <div class="si-icon green"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 17h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+                <div class="si-icon green"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-monitor"/></svg></div>
                 <span>显示</span>
               </div>
-              <svg class="chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>
             </div>
           </div>
         </div>
@@ -108,10 +138,10 @@
           <div class="settings-card">
             <div class="settings-item" data-setting="api">
               <div class="settings-item-left">
-                <div class="si-icon orange"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 7h12M4 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="7" r="2" fill="currentColor"/><circle cx="13" cy="13" r="2" fill="currentColor"/></svg></div>
+                <div class="si-icon orange"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sliders"/></svg></div>
                 <span>API 配置</span>
               </div>
-              <svg class="chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>
             </div>
           </div>
         </div>
@@ -120,10 +150,10 @@
           <div class="settings-card">
             <div class="settings-item" data-setting="data">
               <div class="settings-item-left">
-                <div class="si-icon red"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 6h12l-1 10H5L4 6z" stroke="currentColor" stroke-width="1.5"/><path d="M8 3h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+                <div class="si-icon red"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-download"/></svg></div>
                 <span>数据管理</span>
               </div>
-              <svg class="chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>
             </div>
           </div>
         </div>
@@ -131,7 +161,7 @@
           <div class="settings-card">
             <div class="settings-item disabled">
               <div class="settings-item-left">
-                <div class="si-icon blue"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v4M10 7h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+                <div class="si-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-info"/></svg></div>
                 <span>KirbyDay v1.0</span>
               </div>
             </div>
@@ -142,7 +172,7 @@
       <!-- Sub: General -->
       <div id="settings-general" class="settings-sub hidden">
         <div class="settings-sub-header">
-          <button class="settings-back" aria-label="返回"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+          <button class="settings-back" aria-label="返回"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
           <h2>通用设置</h2>
         </div>
         <div class="settings-card" style="margin-bottom:12px">
@@ -170,7 +200,7 @@
       <!-- Sub: Theme -->
       <div id="settings-theme" class="settings-sub hidden">
         <div class="settings-sub-header">
-          <button class="settings-back" aria-label="返回"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+          <button class="settings-back" aria-label="返回"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
           <h2>主题</h2>
         </div>
         <div class="theme-grid">
@@ -178,13 +208,15 @@
           <div class="theme-card" data-theme="notion"><div class="theme-preview theme-preview-notion"></div><span>Notion</span></div>
           <div class="theme-card" data-theme="corporate"><div class="theme-preview theme-preview-corporate"></div><span>企业</span></div>
           <div class="theme-card" data-theme="ocean"><div class="theme-preview theme-preview-ocean"></div><span>海洋</span></div>
+          <div class="theme-card" data-theme="kirby"><div class="theme-preview theme-preview-kirby"></div><span>卡比</span></div>
+          <div class="theme-card" data-theme="animal"><div class="theme-preview theme-preview-animal"></div><span>动森</span></div>
         </div>
       </div>
 
       <!-- Sub: Display -->
       <div id="settings-display" class="settings-sub hidden">
         <div class="settings-sub-header">
-          <button class="settings-back" aria-label="返回"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+          <button class="settings-back" aria-label="返回"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
           <h2>显示</h2>
         </div>
         <div class="toggle-row" style="border-radius:var(--radius-md) var(--radius-md) 0 0">
@@ -208,7 +240,7 @@
       <!-- Sub: API -->
       <div id="settings-api" class="settings-sub hidden">
         <div class="settings-sub-header">
-          <button class="settings-back" aria-label="返回"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+          <button class="settings-back" aria-label="返回"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
           <h2>API 配置</h2>
         </div>
         <div class="form-row vertical" style="margin-bottom:12px"><label>API URL</label><input id="setting-api-url" type="url" class="form-input" placeholder="https://api.openai.com/v1"></div>
@@ -221,7 +253,7 @@
       <!-- Sub: Data Management -->
       <div id="settings-data" class="settings-sub hidden">
         <div class="settings-sub-header">
-          <button class="settings-back" aria-label="返回"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+          <button class="settings-back" aria-label="返回"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
           <h2>数据管理</h2>
         </div>
         <div class="settings-card" style="padding:16px;margin-bottom:16px">
@@ -247,7 +279,7 @@
       <div class="modal-header">
         <h2 id="modal-task-title">新建任务</h2>
         <button id="modal-close" class="icon-btn" aria-label="关闭">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M6 6l10 10M16 6L6 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg>
         </button>
       </div>
       <form id="task-form" class="task-form">
@@ -280,6 +312,24 @@
           </select>
         </div>
         <div class="form-row">
+          <label>重复</label>
+          <select id="task-repeat" class="form-input">
+            <option value="">不重复</option>
+            <option value="daily">每天</option>
+            <option value="weekly">每周</option>
+            <option value="monthly">每月</option>
+            <option value="yearly">每年</option>
+          </select>
+        </div>
+        <div class="form-row hidden" id="repeat-options">
+          <label>间隔</label>
+          <input id="task-repeat-interval" type="number" class="form-input" min="1" step="1" value="1">
+        </div>
+        <div class="form-row hidden" id="repeat-end-row">
+          <label>结束</label>
+          <input id="task-repeat-end" type="date" class="form-input">
+        </div>
+        <div class="form-row">
           <label>地点</label>
           <input id="task-location" type="text" class="form-input" placeholder="可选">
         </div>
@@ -296,19 +346,19 @@
   <!-- Bottom Tab Bar -->
   <nav id="tab-bar" class="tab-bar">
     <button class="tab-item active" data-tab="tasks">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="4" stroke="currentColor" stroke-width="1.5"/><path d="M8 12l2.5 2.5L16 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tasks"/></svg>
       <span>任务</span>
     </button>
     <button class="tab-item" data-tab="calendar">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="4" stroke="currentColor" stroke-width="1.5"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-calendar"/></svg>
       <span>视图</span>
     </button>
     <button class="tab-item" data-tab="kirby">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 5.58 2 10c0 2.4 1.34 4.54 3.42 6.02-.12 1.6-.72 3.1-1.42 3.98 2.1 0 4.18-.86 5.48-1.84.8.12 1.64.18 2.52.18 5.52 0 10-3.58 10-8S17.52 2 12 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 10.5v3M10.5 9v5M13 8v7M15.5 9.5v4M18 10.5v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chat"/></svg>
       <span>卡比</span>
     </button>
     <button class="tab-item" data-tab="settings">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5.64 5.64l2.12 2.12M16.24 16.24l2.12 2.12M5.64 18.36l2.12-2.12M16.24 7.76l2.12-2.12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-settings"/></svg>
       <span>设置</span>
     </button>
   </nav>
@@ -320,6 +370,8 @@
   </div>
 
   <script src="src/script/storage.js"></script>
+  <script src="src/script/icons.js"></script>
+  <script src="src/script/recurrence.js"></script>
   <script src="src/script/holidays.js"></script>
   <script src="src/script/router.js"></script>
   <script src="src/script/tasks.js"></script>

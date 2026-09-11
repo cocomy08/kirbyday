@@ -169,6 +169,34 @@
 .theme-preview-ocean::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 30%; background: #fff; }
 .theme-preview-ocean::after { content: 'Aa'; position: absolute; top: 20%; left: 50%; transform: translateX(-50%); font-size: 18px; font-weight: 700; color: #0c4a6e; }
 
+.theme-preview-kirby { background: #fff0f6; }
+.theme-preview-kirby::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 30%; background: #fff; }
+.theme-preview-kirby::after {
+  content: '';
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
+  background: #ff5c8a;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+.theme-preview-animal { background: #fdf3e3; }
+.theme-preview-animal::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 30%; background: #fffdf7; border-top: 1px solid #e8dcc8; }
+.theme-preview-animal::after {
+  content: '';
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 22px;
+  background: #6f9f62;
+  border-radius: 60% 0 60% 0;
+}
+
 .theme-card span { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
 
 #tab-settings { position: relative; }

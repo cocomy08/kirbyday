@@ -1,4 +1,4 @@
-const VERSION = '2.1.0';
+const VERSION = '2.2.0';
 const CACHE = 'kirbyday-' + VERSION;
 
 self.addEventListener('install', event => {
@@ -17,6 +17,8 @@ self.addEventListener('install', event => {
         './src/css/themes.css',
         './src/script/storage.js',
         './src/script/holidays.js',
+        './src/script/icons.js',
+        './src/script/recurrence.js',
         './src/script/router.js',
         './src/script/tasks.js',
         './src/script/calendar.js',
