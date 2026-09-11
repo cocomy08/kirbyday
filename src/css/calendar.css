@@ -1,25 +1,29 @@
 .view-switcher {
   display: flex;
-  padding: 8px 16px;
-  gap: 4px;
+  margin: 8px 18px;
+  padding: 5px;
+  gap: 2px;
   flex-shrink: 0;
+  background: var(--bg-card);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
 }
 
 .view-btn {
   flex: 1;
-  padding: 6px 2px;
+  padding: 8px 2px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-secondary);
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
   transition: all var(--transition-normal);
 }
 
 .view-btn.active {
   color: #fff;
-  background: var(--accent);
+  background: var(--ink);
   box-shadow: var(--shadow-xs);
 }
 
@@ -28,6 +32,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(96px + var(--safe-bottom));
 }
 
 /* ── Month View ── */

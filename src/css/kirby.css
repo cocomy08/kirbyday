@@ -1,21 +1,25 @@
 #tab-kirby { display: none; flex-direction: column; height: 100%; position: relative; }
 #tab-kirby.active { display: flex; }
 
-.kirby-chat { flex: 1; overflow-y: auto; padding: 16px; }
+.kirby-chat { flex: 1; overflow-y: auto; padding: 16px 18px; }
 
 .kirby-welcome {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 24px;
+  padding: 48px 28px;
+  margin: 8px 0;
   text-align: center;
-  gap: 8px;
+  gap: 10px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
-.kirby-welcome h2 { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.4px; }
+.kirby-welcome h2 { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
 .kirby-welcome p { font-size: 15px; color: var(--text-secondary); max-width: 260px; }
-.kirby-hint { font-size: 13px; color: var(--text-tertiary); padding: 5px 14px; background: var(--bg-input); border-radius: var(--radius-full); }
+.kirby-hint { font-size: 13px; color: var(--text-secondary); padding: 6px 14px; background: var(--bg-input); border-radius: var(--radius-full); }
 
 .kirby-messages { display: flex; flex-direction: column; gap: 8px; }
 
@@ -76,15 +80,15 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  background: var(--text);
-  color: #fff;
+  background: var(--ink);
+  color: var(--bg-card);
   border-radius: var(--radius-sm);
   margin-top: 8px;
   font-size: 14px;
   animation: msgSlideIn 250ms ease;
 }
 
-.undo-banner button { color: var(--accent); font-weight: 700; font-size: 14px; }
+.undo-banner button { color: var(--bg-card); font-weight: 800; font-size: 14px; text-decoration: underline; }
 
 .kirby-msg.loading { display: flex; gap: 5px; padding: 14px 18px; }
 .kirby-msg.loading span { width: 6px; height: 6px; background: var(--text-tertiary); border-radius: 50%; animation: dotBounce 1.4s infinite ease-in-out; }
@@ -97,14 +101,14 @@
   display: flex;
   align-items: flex-end;
   gap: 10px;
-  padding: 10px 16px 12px;
+  padding: 10px 18px calc(84px + var(--safe-bottom));
   background: var(--bg);
   flex-shrink: 0;
 }
 
 .kirby-input {
   flex: 1;
-  padding: 10px 14px;
+  padding: 12px 16px;
   background: var(--bg-card);
   border: none;
   border-radius: var(--radius-lg);
@@ -112,27 +116,28 @@
   resize: none;
   outline: none;
   max-height: 100px;
-  box-shadow: var(--shadow-xs);
+  box-shadow: var(--shadow-sm);
   transition: box-shadow var(--transition-normal);
 }
 
-.kirby-input:focus { box-shadow: var(--shadow-xs), 0 0 0 2px var(--accent-light); }
+.kirby-input:focus { box-shadow: var(--shadow-sm), 0 0 0 2px var(--accent-light); }
 
 .kirby-send-btn {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--accent);
+  background: var(--ink);
   color: #fff;
   border-radius: 50%;
   flex-shrink: 0;
-  transition: opacity var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
 }
 
-.kirby-send-btn:active { opacity: 0.75; }
-.kirby-send-btn svg { width: 18px; height: 18px; }
+.kirby-send-btn:active { transform: scale(0.9); opacity: 0.85; }
+.kirby-send-btn svg { width: 20px; height: 20px; }
 
 /* History panel */
 .history-panel {
@@ -188,7 +193,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding-bottom: 8px;
+  padding-bottom: calc(96px + var(--safe-bottom));
 }
 
 .history-item {

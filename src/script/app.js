@@ -77,7 +77,8 @@ const App = {
     const modal = document.getElementById('modal-task');
     const form = document.getElementById('task-form');
 
-    document.getElementById('btn-add-task').addEventListener('click', () => this.openNewTask());
+    const fab = document.getElementById('fab-add');
+    if (fab) fab.addEventListener('click', () => this.openNewTask());
 
     document.getElementById('modal-close').addEventListener('click', () => {
       modal.classList.add('hidden');

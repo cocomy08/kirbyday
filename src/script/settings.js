@@ -4,7 +4,6 @@ const SettingsView = {
     this._bindNav();
     this._bindToggles();
     this._bindAPI();
-    this._bindTheme();
     this._bindSelects();
     this._bindData();
     this._bindPeriod();
@@ -26,12 +25,6 @@ const SettingsView = {
     this._setToggle('setting-holidays', s.showHolidays !== false);
     this._setToggle('setting-weeknum', !!s.showWeekNum);
 
-    if (s.theme && s.theme !== 'default') {
-      document.body.classList.add('theme-' + s.theme);
-      document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
-      const tc = document.querySelector(`.theme-card[data-theme="${s.theme}"]`);
-      if (tc) tc.classList.add('active');
-    }
     if (s.model) {
       document.getElementById('setting-model').innerHTML = `<option value="${s.model}" selected>${s.model}</option>`;
     }
@@ -132,21 +125,6 @@ const SettingsView = {
       const btn = document.getElementById('btn-save-api');
       btn.textContent = '已保存';
       setTimeout(() => { btn.textContent = '保存配置'; }, 1500);
-    });
-  },
-
-  _bindTheme() {
-    document.querySelectorAll('.theme-card').forEach(card => {
-      card.addEventListener('click', () => {
-        document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        const theme = card.dataset.theme;
-        document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
-        if (theme !== 'default') document.body.classList.add('theme-' + theme);
-        if (Store.getSetting('darkMode')) document.body.classList.add('dark');
-        Store.setSetting('theme', theme);
-        this._applyThemeColor();
-      });
     });
   },
 

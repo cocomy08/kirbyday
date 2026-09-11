@@ -23,29 +23,24 @@ const Router = {
   },
 
   _updateHeader(tab) {
-    const addBtn = document.getElementById('btn-add-task');
     const todayBtn = document.getElementById('btn-today');
     const historyBtn = document.getElementById('btn-history');
     this.refreshSubtitle();
 
     switch (tab) {
       case 'tasks':
-        addBtn.classList.remove('hidden');
         todayBtn.classList.add('hidden');
         historyBtn.classList.add('hidden');
         break;
       case 'calendar':
-        addBtn.classList.remove('hidden');
         todayBtn.classList.remove('hidden');
         historyBtn.classList.add('hidden');
         break;
       case 'kirby':
-        addBtn.classList.add('hidden');
         todayBtn.classList.add('hidden');
         historyBtn.classList.remove('hidden');
         break;
       case 'settings':
-        addBtn.classList.add('hidden');
         todayBtn.classList.add('hidden');
         historyBtn.classList.add('hidden');
         break;
