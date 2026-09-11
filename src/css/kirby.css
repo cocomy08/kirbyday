@@ -12,9 +12,9 @@
   margin: 8px 0;
   text-align: center;
   gap: 10px;
-  background: var(--bg-card);
+  /* background: var(--bg-card); */
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  /* box-shadow: var(--shadow-sm); */
 }
 
 .kirby-welcome h2 { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
@@ -40,24 +40,27 @@
 .kirby-msg.user {
   align-self: flex-end;
   background: var(--accent);
-  color: #fff;
-  border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg);
+  color: var(--on-accent);
+  border-radius: 12px;
 }
 
 .kirby-msg.ai {
   align-self: flex-start;
   background: var(--bg-card);
   color: var(--text);
-  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 4px;
+  border-radius: 12px;
+  border: 0.5px solid var(--separator);
   box-shadow: var(--shadow-xs);
 }
 
 /* Review card */
 .review-card {
   margin-top: 8px;
-  background: var(--bg);
-  border-radius: var(--radius-sm);
-  padding: 12px;
+  background: var(--bg-card);
+  border: 0.5px solid var(--separator);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: var(--shadow-xs);
 }
 
 .review-card .review-title { font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 8px; }
@@ -66,12 +69,12 @@
 .review-field:last-of-type { border-bottom: none; }
 .review-field .rf-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); min-width: 38px; }
 .review-field .rf-value { flex: 1; font-size: 14px; color: var(--text); }
-.review-field .rf-input { flex: 1; padding: 5px 8px; background: var(--bg-card); border: none; border-radius: 6px; font-size: 14px; color: var(--text); outline: none; }
+.review-field .rf-input { flex: 1; padding: 5px 8px; background: var(--bg-input); border: none; border-radius: 6px; font-size: 14px; color: var(--text); outline: none; }
 .review-field .rf-input:focus { box-shadow: 0 0 0 2px var(--accent-light); }
 
 .review-actions { display: flex; gap: 8px; margin-top: 10px; }
 .review-actions button { flex: 1; padding: 9px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; transition: opacity var(--transition-fast); }
-.review-actions .review-confirm { background: var(--accent); color: #fff; }
+.review-actions .review-confirm { background: var(--accent); color: var(--on-accent); }
 .review-actions .review-confirm:active { opacity: 0.8; }
 .review-actions .review-edit { background: var(--bg-card); color: var(--accent); }
 
@@ -129,7 +132,7 @@
   align-items: center;
   justify-content: center;
   background: var(--ink);
-  color: #fff;
+  color: var(--on-accent);
   border-radius: 50%;
   flex-shrink: 0;
   box-shadow: var(--shadow-sm);

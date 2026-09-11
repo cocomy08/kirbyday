@@ -12,17 +12,17 @@
   font-weight: 700;
   color: var(--text-secondary);
   background: var(--bg-card);
-  border: none;
+  border: 0.5px solid var(--separator);
   border-radius: var(--radius-full);
   white-space: nowrap;
   transition: all var(--transition-normal);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-xs);
 }
 
 .filter-chip.active {
-  color: #fff;
+  color: var(--on-accent);
   background: var(--ink);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-xs);
 }
 
 .task-list {
@@ -38,8 +38,9 @@
   padding: 18px 18px;
   margin-bottom: 12px;
   background: var(--bg-card);
+  border: 0.5px solid var(--separator);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-xs);
   cursor: pointer;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
   position: relative;
@@ -70,7 +71,7 @@
   transition: all var(--transition-normal);
 }
 
-.task-checkbox.checked { background: var(--ink); border-color: var(--ink); color: #fff; }
+.task-checkbox.checked { background: var(--ink); border-color: var(--ink); color: var(--on-accent); }
 .task-checkbox.checked svg { display: block; }
 .task-checkbox svg { display: none; }
 

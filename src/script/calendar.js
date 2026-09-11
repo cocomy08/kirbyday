@@ -6,19 +6,14 @@ const CalendarView = {
 
   init() {
     this.currentView = Store.getSetting('defaultView') || 'week';
-    document.querySelectorAll('.view-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        this.currentView = btn.dataset.view;
+    const select = document.getElementById('view-select');
+    if (select) {
+      select.value = this.currentView;
+      select.addEventListener('change', () => {
+        this.currentView = select.value;
         this.expandedDate = null;
         this.render();
       });
-    });
-    const activeBtn = document.querySelector(`.view-btn[data-view="${this.currentView}"]`);
-    if (activeBtn) {
-      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-      activeBtn.classList.add('active');
     }
     this._setupSwipe();
   },

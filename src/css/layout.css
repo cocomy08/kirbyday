@@ -23,9 +23,9 @@
   align-items: center;
   padding: 11px 18px;
   background: var(--bg-card);
-  border: none;
+  border: 0.5px solid var(--separator);
   border-radius: var(--radius-full);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-xs);
   transition: padding var(--transition-normal);
 }
 
@@ -53,8 +53,9 @@
   font-weight: var(--fw-700);
   color: var(--text);
   background: var(--bg-card);
+  border: 0.5px solid var(--separator);
   border-radius: var(--radius-full);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-xs);
   transition: background var(--transition-fast), transform var(--transition-fast);
 }
 
@@ -68,8 +69,8 @@
   height: 42px;
   border-radius: 50%;
   background: var(--ink);
-  color: #fff;
-  box-shadow: var(--shadow-sm);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-xs);
   transition: transform var(--transition-fast), opacity var(--transition-fast);
 }
 
@@ -84,7 +85,8 @@
   border-radius: 50%;
   color: var(--text);
   background: var(--bg-card);
-  box-shadow: var(--shadow-sm);
+  border: 0.5px solid var(--separator);
+  box-shadow: var(--shadow-xs);
   transition: background var(--transition-fast), transform var(--transition-fast);
 }
 
@@ -115,8 +117,9 @@
   max-width: 460px;
   padding: 8px 12px;
   background: var(--bg-card);
+  border: 0.5px solid var(--separator);
   border-radius: var(--radius-full);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .tab-item {
@@ -150,8 +153,8 @@
   margin: -14px 2px 0;
   border-radius: 50%;
   background: var(--ink);
-  color: #fff;
-  box-shadow: var(--shadow-md);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-sm);
   transition: transform var(--transition-fast), opacity var(--transition-fast);
 }
 
@@ -285,12 +288,12 @@ select.form-input {
   width: 100%;
   padding: 14px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font-size: 16px;
   font-weight: var(--fw-700);
   border: none;
   border-radius: var(--radius-xl);
-  box-shadow: 0 4px 14px var(--accent-light);
+  box-shadow: 0 2px 8px var(--accent-light);
   transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
   letter-spacing: -0.1px;
 }

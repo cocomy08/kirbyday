@@ -147,8 +147,8 @@ const TasksView = {
       actions.appendChild(delBtn);
 
       card.appendChild(colorBar);
-      card.appendChild(checkbox);
       card.appendChild(body);
+      card.appendChild(checkbox);
       card.appendChild(actions);
 
       card.addEventListener('click', () => App.openEditTask(task.id));

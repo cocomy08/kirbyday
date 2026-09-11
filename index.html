@@ -79,11 +79,13 @@
     <!-- Tab: Calendar -->
     <section id="tab-calendar" class="tab-panel">
       <div class="view-switcher">
-        <button class="view-btn active" data-view="day">日</button>
-        <button class="view-btn" data-view="3day">三日</button>
-        <button class="view-btn" data-view="week">周</button>
-        <button class="view-btn" data-view="weeklist">周列表</button>
-        <button class="view-btn" data-view="month">月</button>
+        <select id="view-select" class="view-select" aria-label="切换视图">
+          <option value="day">日</option>
+          <option value="3day">三日</option>
+          <option value="week" selected>周</option>
+          <option value="weeklist">周列表</option>
+          <option value="month">月</option>
+        </select>
       </div>
       <div id="calendar-container" class="calendar-container"></div>
     </section>
@@ -135,6 +137,13 @@
               <div class="settings-item-left">
                 <div class="si-icon green"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-monitor"/></svg></div>
                 <span>显示</span>
+              </div>
+              <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+            </div>
+            <div class="settings-item" data-setting="theme">
+              <div class="settings-item-left">
+                <div class="si-icon purple"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sun"/></svg></div>
+                <span>主题</span>
               </div>
               <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>
             </div>
@@ -240,16 +249,46 @@
         </div>
       </div>
 
+      <!-- Sub: Theme -->
+      <div id="settings-theme" class="settings-sub hidden">
+        <div class="settings-sub-header">
+          <button class="settings-back" aria-label="返回"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+          <h2>主题</h2>
+        </div>
+        <div class="theme-grid">
+          <div class="theme-card active" data-theme="default"><div class="theme-preview theme-preview-default"></div><span>极简</span></div>
+          <div class="theme-card" data-theme="notion"><div class="theme-preview theme-preview-notion"></div><span>Notion</span></div>
+          <div class="theme-card" data-theme="corporate"><div class="theme-preview theme-preview-corporate"></div><span>企业</span></div>
+          <div class="theme-card" data-theme="ocean"><div class="theme-preview theme-preview-ocean"></div><span>海洋</span></div>
+          <div class="theme-card" data-theme="kirby"><div class="theme-preview theme-preview-kirby"></div><span>卡比</span></div>
+          <div class="theme-card" data-theme="animal"><div class="theme-preview theme-preview-animal"></div><span>动森</span></div>
+        </div>
+      </div>
+
       <!-- Sub: API -->
       <div id="settings-api" class="settings-sub hidden">
         <div class="settings-sub-header">
           <button class="settings-back" aria-label="返回"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
           <h2>API 配置</h2>
         </div>
-        <div class="form-row vertical" style="margin-bottom:12px"><label>API URL</label><input id="setting-api-url" type="url" class="form-input" placeholder="https://api.openai.com/v1"></div>
-        <div class="form-row vertical" style="margin-bottom:12px"><label>API Key</label><input id="setting-api-key" type="password" class="form-input" placeholder="sk-..."></div>
-        <button id="btn-fetch-models" class="btn-secondary">拉取模型列表</button>
-        <div class="form-row vertical" style="margin-bottom:12px"><label>模型</label><select id="setting-model" class="form-input"><option value="">请先拉取模型</option></select></div>
+        <p class="api-hint">配置大模型接口后，卡比才能帮你把文字提取成日程。</p>
+        <div class="settings-card api-card">
+          <div class="api-field">
+            <label>API URL</label>
+            <input id="setting-api-url" type="url" class="form-input" placeholder="https://api.openai.com/v1">
+          </div>
+          <div class="api-field">
+            <label>API Key</label>
+            <input id="setting-api-key" type="password" class="form-input" placeholder="sk-...">
+          </div>
+          <div class="api-row">
+            <button id="btn-fetch-models" class="btn-secondary" style="margin-bottom:0">拉取模型列表</button>
+          </div>
+          <div class="api-field">
+            <label>模型</label>
+            <select id="setting-model" class="form-input"><option value="">请先拉取模型</option></select>
+          </div>
+        </div>
         <button id="btn-save-api" class="btn-primary">保存配置</button>
       </div>
 

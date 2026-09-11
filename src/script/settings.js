@@ -3,6 +3,7 @@ const SettingsView = {
     this._loadValues();
     this._bindNav();
     this._bindToggles();
+    this._bindTheme();
     this._bindAPI();
     this._bindSelects();
     this._bindData();
@@ -28,7 +29,30 @@ const SettingsView = {
     if (s.model) {
       document.getElementById('setting-model').innerHTML = `<option value="${s.model}" selected>${s.model}</option>`;
     }
+    this._applyTheme(s.theme || 'default');
     this._applyThemeColor();
+  },
+
+  // 应用主题：切换 body.theme-* 类 + 高亮当前主题卡片
+  _applyTheme(name) {
+    document.body.classList.forEach(c => {
+      if (c.startsWith('theme-')) document.body.classList.remove(c);
+    });
+    if (name && name !== 'default') document.body.classList.add('theme-' + name);
+    document.querySelectorAll('.theme-card').forEach(card => {
+      card.classList.toggle('active', card.dataset.theme === (name || 'default'));
+    });
+  },
+
+  _bindTheme() {
+    document.querySelectorAll('.theme-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const name = card.dataset.theme;
+        Store.setSetting('theme', name);
+        this._applyTheme(name);
+        this._applyThemeColor();
+      });
+    });
   },
 
   // 让 iOS/Android PWA 状态栏颜色跟随当前主题背景
