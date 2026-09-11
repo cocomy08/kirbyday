@@ -1,6 +1,8 @@
 .app-header {
-  position: sticky;
-  top: 0;
+  /* relative, not sticky: the header is a flex sibling above .app-main (the real
+     scroll container), so it stays pinned without sticky. Sticky misrenders as an
+     overlay on iOS standalone and overlaps the panel content. */
+  position: relative;
   z-index: 100;
   display: flex;
   align-items: center;
@@ -103,23 +105,23 @@
 .tab-panel { display: none; height: 100%; }
 .tab-panel.active { display: flex; flex-direction: column; }
 
-/* Floating capsule tab bar with center FAB */
+/* Bottom tab bar with center FAB — flush to the bottom edge, top corners only */
 .tab-bar {
   position: fixed;
-  left: 50%;
-  bottom: var(--safe-bottom);
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 120;
   display: flex;
   align-items: center;
   gap: 4px;
-  width: calc(100% - 32px);
-  max-width: 460px;
+  width: 100%;
   padding: 8px 12px;
+  padding-bottom: calc(8px + var(--safe-bottom));
   background: var(--bg-card);
-  border: 0.5px solid var(--separator);
-  border-radius: var(--radius-full);
-  box-shadow: var(--shadow-sm);
+  border-top: 0.5px solid var(--separator);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .tab-item {
@@ -148,8 +150,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
+  width: 40px;
+  height: 40px;
   margin: -14px 2px 0;
   border-radius: 50%;
   background: var(--ink);

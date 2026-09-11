@@ -111,11 +111,14 @@ html, body {
   overscroll-behavior: none;
 }
 
-/* iOS 26 standalone bug (WebKit #301108): viewport-fit=cover fails in
-   standalone PWA, height:100% resolves to the safe-area-trimmed height and
-   leaves white bars. 100vh bypasses it. */
+/* iOS standalone PWA (WebKit #301108 / #315945): with viewport-fit=cover both
+   height:100% and 100vh resolve to the wrong height — 100% → the safe-area-trimmed
+   height (white bars), 100vh → the full physical screen (pushes the bottom of the
+   app, e.g. the kirby input, under the home indicator). 100dvh tracks the real
+   visible viewport. 100vh is kept as a fallback for engines without dvh. */
 @media (display-mode: standalone) {
   html, body { height: 100vh; }
+  html, body { height: 100dvh; }
 }
 
 body {
