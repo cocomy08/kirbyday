@@ -23,44 +23,54 @@ const Router = {
   },
 
   _updateHeader(tab) {
-    const title = document.getElementById('header-title');
-    const subtitle = document.getElementById('header-subtitle');
     const addBtn = document.getElementById('btn-add-task');
     const todayBtn = document.getElementById('btn-today');
     const historyBtn = document.getElementById('btn-history');
-    const now = new Date();
-    const wd = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][now.getDay()];
-    const todayStr = `${now.getMonth() + 1}月${now.getDate()}日 · ${wd}`;
+    this.refreshSubtitle();
 
     switch (tab) {
       case 'tasks':
-        title.textContent = '任务';
-        subtitle.textContent = todayStr;
         addBtn.classList.remove('hidden');
         todayBtn.classList.add('hidden');
         historyBtn.classList.add('hidden');
         break;
       case 'calendar':
-        CalendarView.updateHeaderTitle();
-        subtitle.textContent = todayStr;
         addBtn.classList.remove('hidden');
         todayBtn.classList.remove('hidden');
         historyBtn.classList.add('hidden');
         break;
       case 'kirby':
-        title.textContent = '卡比';
-        subtitle.textContent = 'AI 日程助手';
         addBtn.classList.add('hidden');
         todayBtn.classList.add('hidden');
         historyBtn.classList.remove('hidden');
         break;
       case 'settings':
-        title.textContent = '设置';
-        subtitle.textContent = '偏好与数据';
         addBtn.classList.add('hidden');
         todayBtn.classList.add('hidden');
         historyBtn.classList.add('hidden');
         break;
     }
+  },
+
+  // 顶栏胶囊：今天日期 + 今天任务数
+  refreshSubtitle() {
+    const subtitle = document.getElementById('header-subtitle');
+    if (!subtitle) return;
+    const now = new Date();
+    const wd = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][now.getDay()];
+    const todayStr = `${now.getMonth() + 1}月${now.getDate()}日 ${wd}`;
+    const count = this._todayTaskCount();
+    subtitle.textContent = count > 0 ? `${todayStr} · 今天 ${count} 个任务` : `${todayStr} · 今天暂无任务`;
+  },
+
+  _todayTaskCount() {
+    const now = new Date();
+    const p = n => String(n).padStart(2, '0');
+    const ts = `${now.getFullYear()}-${p(now.getMonth() + 1)}-${p(now.getDate())}`;
+    return Store.getTasks().filter(t => {
+      if (t.done) return false;
+      if (t.repeat) return Recurrence.occursOn(t, ts);
+      return t.date === ts;
+    }).length;
   }
 };

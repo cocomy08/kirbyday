@@ -52,6 +52,14 @@
 .si-icon.orange { background: #ff9500; }
 .si-icon.purple { background: #af52de; }
 .si-icon.red { background: #ff3b30; }
+.si-icon.pink { background: #ff5c8a; }
+
+.period-predict {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 2px 16px 0;
+  margin-top: 10px;
+}
 
 .settings-item .chevron { color: var(--text-tertiary); }
 

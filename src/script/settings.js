@@ -7,6 +7,7 @@ const SettingsView = {
     this._bindTheme();
     this._bindSelects();
     this._bindData();
+    this._bindPeriod();
   },
 
   _loadValues() {
@@ -19,8 +20,6 @@ const SettingsView = {
 
     if (s.darkMode) {
       document.body.classList.add('dark');
-      const m = document.querySelector('meta[name="theme-color"]');
-      if (m) m.content = '#000000';
       this._setToggle('setting-dark-mode', true);
     }
     this._setToggle('setting-lunar', s.showLunar !== false);
@@ -36,6 +35,15 @@ const SettingsView = {
     if (s.model) {
       document.getElementById('setting-model').innerHTML = `<option value="${s.model}" selected>${s.model}</option>`;
     }
+    this._applyThemeColor();
+  },
+
+  // 让 iOS/Android PWA 状态栏颜色跟随当前主题背景
+  _applyThemeColor() {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) return;
+    const bg = getComputedStyle(document.body).getPropertyValue('--bg').trim();
+    if (bg) meta.content = bg;
   },
 
   _setToggle(id, on) {
@@ -71,8 +79,7 @@ const SettingsView = {
         key: 'darkMode',
         cb: v => {
           document.body.classList.toggle('dark', v);
-          const m = document.querySelector('meta[name="theme-color"]');
-          if (m) m.content = v ? '#000000' : '#f2f2f7';
+          this._applyThemeColor();
         }
       },
       'setting-lunar': { key: 'showLunar' },
@@ -138,6 +145,7 @@ const SettingsView = {
         if (theme !== 'default') document.body.classList.add('theme-' + theme);
         if (Store.getSetting('darkMode')) document.body.classList.add('dark');
         Store.setSetting('theme', theme);
+        this._applyThemeColor();
       });
     });
   },
@@ -202,5 +210,133 @@ const SettingsView = {
       <div style="font-size:14px;font-weight:600;margin-bottom:8px">已存储 ${taskCount} 条任务</div>
       <div class="storage-meter"><div class="storage-meter-fill" style="width:${Math.min(pct, 100)}%"></div></div>
       <div class="storage-label">${usageMB} MB / ${quotaMB} MB</div>`;
+  },
+
+  _bindPeriod() {
+    const cycleSel = document.getElementById('setting-period-cycle');
+    const daysSel = document.getElementById('setting-period-days');
+    const recDaysSel = document.getElementById('period-days');
+
+    for (let i = 20; i <= 45; i++) {
+      const o = document.createElement('option');
+      o.value = i; o.textContent = i + ' 天';
+      cycleSel.appendChild(o);
+    }
+    for (let i = 1; i <= 10; i++) {
+      const o1 = document.createElement('option');
+      o1.value = i; o1.textContent = i + ' 天';
+      daysSel.appendChild(o1);
+      const o2 = document.createElement('option');
+      o2.value = i; o2.textContent = i + ' 天';
+      recDaysSel.appendChild(o2);
+    }
+
+    cycleSel.value = Store.getSetting('periodCycle') || 30;
+    daysSel.value = Store.getSetting('periodDuration') || 5;
+    recDaysSel.value = Store.getSetting('periodDuration') || 5;
+
+    cycleSel.addEventListener('change', e => {
+      Store.setSetting('periodCycle', parseInt(e.target.value) || 30);
+      this._renderPeriod();
+    });
+    daysSel.addEventListener('change', e => {
+      Store.setSetting('periodDuration', parseInt(e.target.value) || 5);
+      this._renderPeriod();
+    });
+
+    document.getElementById('btn-period-add').addEventListener('click', () => {
+      document.getElementById('period-edit-id').value = '';
+      document.getElementById('period-start').value = new Date().toISOString().slice(0, 10);
+      document.getElementById('period-start-time').value = '';
+      document.getElementById('period-days').value = Store.getSetting('periodDuration') || 5;
+      document.getElementById('period-form').classList.remove('hidden');
+    });
+
+    document.getElementById('period-cancel').addEventListener('click', () => {
+      document.getElementById('period-form').classList.add('hidden');
+    });
+
+    document.getElementById('period-save').addEventListener('click', () => {
+      const start = document.getElementById('period-start').value;
+      if (!start) { alert('请选择开始日期'); return; }
+      const data = {
+        start,
+        startTime: document.getElementById('period-start-time').value,
+        days: parseInt(document.getElementById('period-days').value) || (Store.getSetting('periodDuration') || 5)
+      };
+      const editId = document.getElementById('period-edit-id').value;
+      if (editId) Store.updatePeriod(editId, data);
+      else Store.addPeriod(data);
+      document.getElementById('period-form').classList.add('hidden');
+      this._renderPeriod();
+    });
+
+    this._renderPeriod();
+  },
+
+  _renderPeriod() {
+    this._renderPeriodList();
+    this._renderPrediction();
+  },
+
+  _renderPeriodList() {
+    const list = document.getElementById('period-list');
+    const recs = Period.sorted().slice().reverse();
+    list.innerHTML = '';
+    if (!recs.length) {
+      list.innerHTML = '<div class="settings-card" style="padding:16px;text-align:center;color:var(--text-tertiary);font-size:13px">暂无记录</div>';
+      return;
+    }
+    const card = document.createElement('div');
+    card.className = 'settings-card';
+    recs.forEach(r => {
+      const [y, m, d] = r.start.split('-');
+      const txt = `${+m}月${+d}日` + (r.startTime ? ` ${r.startTime}` : '') + ` · ${r.days}天`;
+
+      const row = document.createElement('div');
+      row.className = 'settings-item';
+
+      const left = document.createElement('div');
+      left.className = 'settings-item-left';
+      left.innerHTML = `<div class="si-icon pink" style="width:28px;height:28px;border-radius:8px"><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-period"/></svg></div><span>${txt}</span>`;
+
+      const actions = document.createElement('div');
+      actions.style.cssText = 'display:flex;gap:4px;flex-shrink:0';
+      const editBtn = document.createElement('button');
+      editBtn.className = 'icon-btn';
+      editBtn.style.cssText = 'width:30px;height:30px';
+      editBtn.innerHTML = Icon('edit', 15);
+      editBtn.addEventListener('click', () => {
+        document.getElementById('period-edit-id').value = r.id;
+        document.getElementById('period-start').value = r.start;
+        document.getElementById('period-start-time').value = r.startTime || '';
+        document.getElementById('period-days').value = r.days || (Store.getSetting('periodDuration') || 5);
+        document.getElementById('period-form').classList.remove('hidden');
+      });
+      const delBtn = document.createElement('button');
+      delBtn.className = 'icon-btn';
+      delBtn.style.cssText = 'width:30px;height:30px';
+      delBtn.innerHTML = Icon('trash', 15);
+      delBtn.addEventListener('click', () => {
+        Store.deletePeriod(r.id);
+        this._renderPeriod();
+      });
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
+
+      row.appendChild(left);
+      row.appendChild(actions);
+      card.appendChild(row);
+    });
+    list.appendChild(card);
+  },
+
+  _renderPrediction() {
+    const el = document.getElementById('period-predict');
+    if (!el) return;
+    const pred = Period.nextPrediction();
+    if (!pred) { el.textContent = ''; return; }
+    const [, m, d] = pred.split('-');
+    el.textContent = `预测下次：${+m}月${+d}日（前两天为可能提前日）`;
   }
 };

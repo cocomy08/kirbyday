@@ -46,14 +46,18 @@ const KirbyChat = {
 
     const today = new Date().toISOString().slice(0, 10);
     const dow = ['日','一','二','三','四','五','六'][new Date().getDay()];
-    const systemPrompt = `你是日程助手卡比。用户会发来一段安排文字，请提取日程信息。
+    const systemPrompt = `你是日程助手卡比。用户会发来日程安排，也可能记录生理期。请提取信息。
 
-严格输出JSON（不要输出其他内容）：
-{"title":"标题","date":"YYYY-MM-DD","startTime":"HH:mm","endTime":"HH:mm","location":"地点","priority":0,"note":"备注"}
+如果用户提到生理期/月经/大姨妈/例假（例如"生理期来了""大姨妈到了""9月3号来的，来了7天"），输出：
+{"type":"period","start":"YYYY-MM-DD","days":持续天数,"startTime":"HH:mm"}
+days 是 1-10 的整数，未指定时用 5。startTime 表示具体什么时候来的（可选，没有则空字符串）。
 
-title必须是5个字以内的精炼总结，例如"组会""面试""取快递""约饭"。
-priority: 0=无,1=低,2=中,3=高
-没有的字段填空字符串。今天是${today}(周${dow})，请据此计算相对日期。多个事件输出JSON数组。`;
+否则视为日程，输出：
+{"type":"task","title":"标题","date":"YYYY-MM-DD","startTime":"HH:mm","endTime":"HH:mm","location":"地点","priority":0,"note":"备注"}
+
+title 必须是5个字以内的精炼总结，例如"组会""面试""取快递""约饭"。
+priority: 0=无,1=低,2=中,3=高。没有的字段填空字符串。
+今天是${today}(周${dow})，请据此计算相对日期。多个条目输出JSON数组。`;
 
     try {
       const resp = await fetch(apiUrl + '/chat/completions', {
@@ -86,9 +90,107 @@ priority: 0=无,1=低,2=中,3=高
       return;
     }
 
-    const titles = parsed.map(i => i && i.title).filter(Boolean);
-    this._record(q, titles.length ? `已提取 ${titles.length} 条日程：${titles.join('、')}` : '已提取日程');
-    parsed.forEach(item => this._showReviewCard(item));
+    const periods = parsed.filter(i => i && i.type === 'period');
+    const tasks = parsed.filter(i => !i || i.type !== 'period');
+    const summary = [
+      periods.length ? `已记录 ${periods.length} 次生理期` : '',
+      tasks.length ? `已提取 ${tasks.length} 条日程：${tasks.map(t => t && t.title).filter(Boolean).join('、')}` : ''
+    ].filter(Boolean).join('；');
+    this._record(q, summary || '已处理');
+    parsed.forEach(item => {
+      if (item.type === 'period') this._showPeriodCard(item);
+      else this._showReviewCard(item);
+    });
+  },
+
+  _showPeriodCard(item) {
+    const fields = [
+      { key: 'start', label: '开始日期', val: item.start || '' },
+      { key: 'startTime', label: '开始时间', val: item.startTime || '' },
+      { key: 'days', label: '持续天数', val: String(item.days || Store.getSetting('periodDuration') || 5) }
+    ];
+    const wrap = document.createElement('div');
+    wrap.className = 'kirby-msg ai';
+    let isEditing = false;
+
+    const renderCard = (editable) => {
+      let html = `<div class="review-card"><div class="review-title">${editable ? '编辑生理期' : '生理期记录'}</div>`;
+      fields.forEach(f => {
+        html += `<div class="review-field">
+          <span class="rf-label">${f.label}</span>
+          ${editable
+            ? `<input class="rf-input" data-key="${f.key}" value="${this._esc(f.val)}" />`
+            : `<span class="rf-value">${this._esc(f.val || '—')}</span>`}
+        </div>`;
+      });
+      html += `<div class="review-actions">`;
+      if (editable) {
+        html += `<button class="review-confirm" data-action="save">保存</button>`;
+        html += `<button class="review-edit" data-action="cancel">取消</button>`;
+      } else {
+        html += `<button class="review-confirm" data-action="add">添加记录</button>`;
+        html += `<button class="review-edit" data-action="edit">编辑</button>`;
+      }
+      html += `</div></div>`;
+      return html;
+    };
+
+    const update = () => {
+      wrap.innerHTML = renderCard(isEditing);
+      wrap.querySelectorAll('[data-action]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const action = btn.dataset.action;
+          if (action === 'edit') { isEditing = true; update(); }
+          else if (action === 'cancel') { isEditing = false; update(); }
+          else if (action === 'save') {
+            wrap.querySelectorAll('.rf-input').forEach(inp => {
+              const f = fields.find(f => f.key === inp.dataset.key);
+              if (f) f.val = inp.value;
+            });
+            isEditing = false;
+            update();
+          } else if (action === 'add') {
+            this._addPeriodFromReview(fields, wrap);
+          }
+        });
+      });
+    };
+
+    update();
+    document.getElementById('kirby-messages').appendChild(wrap);
+    this._scrollBottom();
+  },
+
+  _addPeriodFromReview(fields, wrap) {
+    const data = {};
+    fields.forEach(f => { data[f.key] = f.val; });
+    if (!data.start) {
+      wrap.innerHTML = `<div class="review-card" style="text-align:center;padding:16px;color:var(--red)">请先填写开始日期</div>`;
+      return;
+    }
+    const days = Math.min(10, Math.max(1, parseInt(data.days) || (Store.getSetting('periodDuration') || 5)));
+    const rec = Store.addPeriod({ start: data.start, startTime: data.startTime || '', days });
+    const [, m, d] = rec.start.split('-');
+
+    wrap.innerHTML = `
+      <div class="review-card" style="text-align:center;padding:16px">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="margin:0 auto 8px"><circle cx="12" cy="12" r="10" fill="var(--green)" opacity="0.15"/><path d="M8 12l3 3 5-5" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg>
+        <div style="font-weight:600;margin-bottom:4px">已记录生理期</div>
+        <div style="font-size:13px;color:var(--text-secondary)">${+m}月${+d}日${rec.startTime ? ' ' + rec.startTime : ''} · ${rec.days}天</div>
+      </div>`;
+
+    const undo = document.createElement('div');
+    undo.className = 'undo-banner';
+    undo.innerHTML = `<span>已记录生理期</span><button data-undo="true">撤回</button>`;
+    undo.querySelector('[data-undo]').addEventListener('click', () => {
+      Store.deletePeriod(rec.id);
+      undo.remove();
+      wrap.innerHTML = `<div class="review-card" style="text-align:center;padding:16px;color:var(--text-secondary)">已撤回</div>`;
+    });
+    document.getElementById('kirby-messages').appendChild(undo);
+    this._scrollBottom();
+
+    setTimeout(() => { if (undo.parentElement) undo.remove(); }, 8000);
   },
 
   _showReviewCard(item) {
@@ -177,6 +279,7 @@ priority: 0=无,1=低,2=中,3=高
     });
 
     this._lastAddedTaskIds.push(task.id);
+    Router.refreshSubtitle();
 
     wrap.innerHTML = `
       <div class="review-card" style="text-align:center;padding:16px">
@@ -191,6 +294,7 @@ priority: 0=无,1=低,2=中,3=高
     undo.querySelector('[data-undo]').addEventListener('click', () => {
       Store.deleteTask(task.id);
       this._lastAddedTaskIds.pop();
+      Router.refreshSubtitle();
       undo.remove();
       wrap.innerHTML = `<div class="review-card" style="text-align:center;padding:16px;color:var(--text-secondary)">已撤回</div>`;
     });

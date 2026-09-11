@@ -1,6 +1,6 @@
 const Store = {
   _db: null,
-  _cache: { tasks: [], settings: null, history: [] },
+  _cache: { tasks: [], settings: null, history: [], periods: [] },
 
   _defaults: {
     weekStart: 1,
@@ -13,12 +13,14 @@ const Store = {
     theme: 'default',
     apiUrl: '',
     apiKey: '',
-    model: ''
+    model: '',
+    periodCycle: 30,
+    periodDuration: 5
   },
 
   init() {
     return new Promise((resolve, reject) => {
-      const req = indexedDB.open('kirbyday', 3);
+      const req = indexedDB.open('kirbyday', 4);
       req.onupgradeneeded = e => {
         const db = e.target.result;
         if (!db.objectStoreNames.contains('tasks')) {
@@ -29,6 +31,9 @@ const Store = {
         }
         if (!db.objectStoreNames.contains('history')) {
           db.createObjectStore('history', { keyPath: 'id' });
+        }
+        if (!db.objectStoreNames.contains('periods')) {
+          db.createObjectStore('periods', { keyPath: 'id' });
         }
       };
       req.onsuccess = async e => {
@@ -66,10 +71,12 @@ const Store = {
     this._cache.settings = { ...this._defaults };
     settingsArr.forEach(s => { this._cache.settings[s.key] = s.value; });
     this._cache.history = await this._getAll('history');
+    this._cache.periods = await this._getAll('periods');
   },
 
   _getAll(store) {
     return new Promise((resolve, reject) => {
+      if (!this._db.objectStoreNames.contains(store)) { resolve([]); return; }
       const tx = this._db.transaction(store, 'readonly');
       const req = tx.objectStore(store).getAll();
       req.onsuccess = () => resolve(req.result);
@@ -124,6 +131,32 @@ const Store = {
   clearHistory() {
     this._cache.history = [];
     this._clear('history');
+  },
+
+  getPeriods() { return this._cache.periods; },
+
+  addPeriod(record) {
+    if (!record.id) record.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    if (!record.createdAt) record.createdAt = new Date().toISOString();
+    record.days = Math.min(10, Math.max(1, parseInt(record.days) || this.getSetting('periodDuration') || 5));
+    this._cache.periods.push(record);
+    this._put('periods', record);
+    return record;
+  },
+
+  updatePeriod(id, updates) {
+    const r = this._cache.periods.find(r => r.id === id);
+    if (r) {
+      Object.assign(r, updates);
+      if (updates.days !== undefined) r.days = Math.min(10, Math.max(1, parseInt(updates.days) || 5));
+      this._put('periods', r);
+    }
+    return r;
+  },
+
+  deletePeriod(id) {
+    this._cache.periods = this._cache.periods.filter(r => r.id !== id);
+    this._delete('periods', id);
   },
 
   addTask(task) {
@@ -190,7 +223,7 @@ const Store = {
   async exportData() {
     const tasks = this.getTasks();
     const settings = this.getSettings();
-    return JSON.stringify({ version: 3, tasks, settings, history: this.getHistory(), exportedAt: new Date().toISOString() });
+    return JSON.stringify({ version: 4, tasks, settings, history: this.getHistory(), periods: this.getPeriods(), exportedAt: new Date().toISOString() });
   },
 
   async importData(jsonStr) {
@@ -198,9 +231,11 @@ const Store = {
     await this._clear('tasks');
     await this._clear('settings');
     await this._clear('history');
+    await this._clear('periods');
     this._cache.tasks = [];
     this._cache.settings = { ...this._defaults };
     this._cache.history = [];
+    this._cache.periods = [];
     if (data.tasks) {
       for (const t of data.tasks) {
         await this._put('tasks', t);
@@ -217,6 +252,12 @@ const Store = {
       for (const h of data.history) {
         await this._put('history', h);
         this._cache.history.push(h);
+      }
+    }
+    if (data.periods) {
+      for (const p of data.periods) {
+        await this._put('periods', p);
+        this._cache.periods.push(p);
       }
     }
   },

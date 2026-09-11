@@ -14,6 +14,7 @@ const TasksView = {
   },
 
   render() {
+    Router.refreshSubtitle();
     const list = document.getElementById('task-list');
     const tasks = this._filteredTasks();
 

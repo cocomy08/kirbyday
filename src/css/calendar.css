@@ -33,6 +33,26 @@
 /* ── Month View ── */
 .month-view { padding: 0; }
 
+.cal-title {
+  padding: 12px 16px 4px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+/* 生理期标记 */
+.month-cell .period-ico {
+  display: inline-flex;
+  align-items: center;
+  color: #ff5c8a;
+  flex-shrink: 0;
+}
+.month-cell.pd-day { background: rgba(255, 92, 138, 0.12); }
+.month-cell.pd-day .period-ico { color: #ff5c8a; }
+.month-cell.pd-pred .period-ico { color: #ff5c8a; }
+.month-cell.pd-early .period-ico { color: #ff5c8a; opacity: 0.4; }
+
 .month-header {
   display: grid;
   grid-template-columns: repeat(7, 1fr);

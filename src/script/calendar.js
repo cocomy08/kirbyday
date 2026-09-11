@@ -46,7 +46,6 @@ const CalendarView = {
       case 'month': d.setMonth(d.getMonth() + dir); break;
     }
     this.render();
-    this.updateHeaderTitle();
   },
 
   goToday() {
@@ -54,23 +53,6 @@ const CalendarView = {
     this.currentDate = new Date();
     this.expandedDate = null;
     this.render();
-    this.updateHeaderTitle();
-  },
-
-  updateHeaderTitle() {
-    const title = document.getElementById('header-title');
-    const d = this.selectedDate;
-    const y = d.getFullYear(), m = d.getMonth() + 1;
-    switch (this.currentView) {
-      case 'month': title.textContent = `${y}年${m}月`; break;
-      case 'week': case '3day': case 'weeklist':
-        title.textContent = `${y}年${m}月`; break;
-      case 'day': {
-        const wd = ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];
-        title.textContent = `${m}月${d.getDate()}日 ${wd}`;
-        break;
-      }
-    }
   },
 
   render() {
@@ -83,7 +65,6 @@ const CalendarView = {
       case 'weeklist': this._renderWeekList(c); break;
       case 'day': this._renderDay(c); break;
     }
-    this.updateHeaderTitle();
   },
 
   _p(n) { return n < 10 ? '0' + n : '' + n; },
@@ -108,6 +89,11 @@ const CalendarView = {
 
     const wrap = document.createElement('div');
     wrap.className = 'month-view';
+
+    const title = document.createElement('div');
+    title.className = 'cal-title';
+    title.textContent = `${year}年${month + 1}月`;
+    wrap.appendChild(title);
 
     const dayN = ['日','一','二','三','四','五','六'];
     const header = document.createElement('div');
@@ -143,6 +129,14 @@ const CalendarView = {
       dayRow.appendChild(num);
 
       const ds = this._ds(cd);
+      const period = Period.status(ds);
+      if (period) {
+        cell.classList.add({ period: 'pd-day', predicted: 'pd-pred', early: 'pd-early' }[period]);
+        const ico = document.createElement('span');
+        ico.className = 'period-ico';
+        ico.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-period"/></svg>';
+        dayRow.appendChild(ico);
+      }
       if (showHolidays && Holidays.isHoliday(ds)) {
         const hl = document.createElement('span');
         hl.className = 'holiday-label';
@@ -241,6 +235,12 @@ const CalendarView = {
 
     const wrap = document.createElement('div');
     wrap.className = 'week-list';
+    const lastD = new Date(base);
+    lastD.setDate(base.getDate() + 6);
+    const title = document.createElement('div');
+    title.className = 'cal-title';
+    title.textContent = `${base.getMonth() + 1}月${base.getDate()}日 – ${lastD.getMonth() + 1}月${lastD.getDate()}日`;
+    wrap.appendChild(title);
     const dayN = ['周日','周一','周二','周三','周四','周五','周六'];
 
     for (let i = 0; i < 7; i++) {
@@ -300,6 +300,13 @@ const CalendarView = {
     } else {
       base = new Date(this.selectedDate);
     }
+
+    const title = document.createElement('div');
+    title.className = 'cal-title';
+    const lastD = new Date(base);
+    lastD.setDate(base.getDate() + numDays - 1);
+    title.textContent = `${base.getMonth() + 1}月${base.getDate()}日 – ${lastD.getMonth() + 1}月${lastD.getDate()}日`;
+    wrap.appendChild(title);
 
     const headerRow = document.createElement('div');
     headerRow.className = 'week-header-row';
