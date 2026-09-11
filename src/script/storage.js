@@ -1,6 +1,6 @@
 const Store = {
   _db: null,
-  _cache: { tasks: [], settings: null },
+  _cache: { tasks: [], settings: null, history: [] },
 
   _defaults: {
     weekStart: 1,
@@ -18,7 +18,7 @@ const Store = {
 
   init() {
     return new Promise((resolve, reject) => {
-      const req = indexedDB.open('kirbyday', 2);
+      const req = indexedDB.open('kirbyday', 3);
       req.onupgradeneeded = e => {
         const db = e.target.result;
         if (!db.objectStoreNames.contains('tasks')) {
@@ -26,6 +26,9 @@ const Store = {
         }
         if (!db.objectStoreNames.contains('settings')) {
           db.createObjectStore('settings', { keyPath: 'key' });
+        }
+        if (!db.objectStoreNames.contains('history')) {
+          db.createObjectStore('history', { keyPath: 'id' });
         }
       };
       req.onsuccess = async e => {
@@ -62,6 +65,7 @@ const Store = {
     const settingsArr = await this._getAll('settings');
     this._cache.settings = { ...this._defaults };
     settingsArr.forEach(s => { this._cache.settings[s.key] = s.value; });
+    this._cache.history = await this._getAll('history');
   },
 
   _getAll(store) {
@@ -101,6 +105,26 @@ const Store = {
   },
 
   getTasks() { return this._cache.tasks; },
+
+  getHistory() { return this._cache.history; },
+
+  addHistory(record) {
+    if (!record.id) record.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    if (!record.ts) record.ts = Date.now();
+    this._cache.history.push(record);
+    this._put('history', record);
+    return record;
+  },
+
+  deleteHistory(id) {
+    this._cache.history = this._cache.history.filter(h => h.id !== id);
+    this._delete('history', id);
+  },
+
+  clearHistory() {
+    this._cache.history = [];
+    this._clear('history');
+  },
 
   addTask(task) {
     if (!task.id) {
@@ -166,15 +190,17 @@ const Store = {
   async exportData() {
     const tasks = this.getTasks();
     const settings = this.getSettings();
-    return JSON.stringify({ version: 2, tasks, settings, exportedAt: new Date().toISOString() });
+    return JSON.stringify({ version: 3, tasks, settings, history: this.getHistory(), exportedAt: new Date().toISOString() });
   },
 
   async importData(jsonStr) {
     const data = JSON.parse(jsonStr);
     await this._clear('tasks');
     await this._clear('settings');
+    await this._clear('history');
     this._cache.tasks = [];
     this._cache.settings = { ...this._defaults };
+    this._cache.history = [];
     if (data.tasks) {
       for (const t of data.tasks) {
         await this._put('tasks', t);
@@ -185,6 +211,12 @@ const Store = {
       for (const [k, v] of Object.entries(data.settings)) {
         await this._put('settings', { key: k, value: v });
         this._cache.settings[k] = v;
+      }
+    }
+    if (data.history) {
+      for (const h of data.history) {
+        await this._put('history', h);
+        this._cache.history.push(h);
       }
     }
   },

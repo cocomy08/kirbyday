@@ -13,6 +13,11 @@ const KirbyChat = {
       input.style.height = 'auto';
       input.style.height = Math.min(input.scrollHeight, 100) + 'px';
     });
+
+    document.getElementById('btn-history').addEventListener('click', () => this.openHistory());
+    document.getElementById('history-back').addEventListener('click', () => this.closeHistory());
+    const searchInput = document.getElementById('history-search-input');
+    searchInput.addEventListener('input', () => this.renderHistory(searchInput.value.trim()));
   },
 
   async send() {
@@ -35,6 +40,7 @@ const KirbyChat = {
     if (!apiUrl || !apiKey || !model) {
       this._hideLoading();
       this._addMsg('请先在 设置 → API 配置 中填写 URL、Key 并选择模型', 'ai');
+      this._record(text, '未配置 API');
       return;
     }
 
@@ -59,14 +65,15 @@ priority: 0=无,1=低,2=中,3=高
       const data = await resp.json();
       const content = data.choices[0].message.content;
       this._hideLoading();
-      this._handleResponse(content);
+      this._handleResponse(content, text);
     } catch (err) {
       this._hideLoading();
       this._addMsg('出错了: ' + err.message, 'ai');
+      this._record(text, '出错了: ' + err.message);
     }
   },
 
-  _handleResponse(content) {
+  _handleResponse(content, q) {
     let parsed;
     try {
       const m = content.match(/\[[\s\S]*\]|\{[\s\S]*\}/);
@@ -75,9 +82,12 @@ priority: 0=无,1=低,2=中,3=高
       if (!Array.isArray(parsed)) parsed = [parsed];
     } catch {
       this._addMsg(content, 'ai');
+      this._record(q, content);
       return;
     }
 
+    const titles = parsed.map(i => i && i.title).filter(Boolean);
+    this._record(q, titles.length ? `已提取 ${titles.length} 条日程：${titles.join('、')}` : '已提取日程');
     parsed.forEach(item => this._showReviewCard(item));
   },
 
@@ -196,6 +206,80 @@ priority: 0=无,1=低,2=中,3=高
     el.textContent = text;
     document.getElementById('kirby-messages').appendChild(el);
     this._scrollBottom();
+  },
+
+  _record(q, a) {
+    Store.addHistory({ question: q, answer: a });
+  },
+
+  openHistory() {
+    document.getElementById('kirby-history').classList.remove('hidden');
+    this.renderHistory('');
+  },
+
+  closeHistory() {
+    document.getElementById('kirby-history').classList.add('hidden');
+  },
+
+  renderHistory(filter) {
+    const list = document.getElementById('history-list');
+    let items = Store.getHistory();
+    if (filter) {
+      const f = filter.toLowerCase();
+      items = items.filter(h => (h.question || '').toLowerCase().includes(f) || (h.answer || '').toLowerCase().includes(f));
+    }
+    items = [...items].sort((a, b) => (b.ts || 0) - (a.ts || 0));
+    list.innerHTML = '';
+
+    if (items.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'history-empty';
+      empty.textContent = filter ? '没有匹配的记录' : '暂无历史对话';
+      list.appendChild(empty);
+      return;
+    }
+
+    items.forEach(h => {
+      const item = document.createElement('div');
+      item.className = 'history-item';
+
+      const q = document.createElement('div');
+      q.className = 'hi-q';
+      q.textContent = h.question || '';
+      const a = document.createElement('div');
+      a.className = 'hi-a';
+      a.textContent = h.answer || '';
+
+      const foot = document.createElement('div');
+      foot.className = 'hi-foot';
+      const time = document.createElement('span');
+      time.className = 'hi-time';
+      time.textContent = this._fmtTime(h.ts);
+      const del = document.createElement('button');
+      del.className = 'hi-del';
+      del.setAttribute('aria-label', '删除');
+      del.innerHTML = Icon('trash', 15);
+      del.addEventListener('click', () => {
+        Store.deleteHistory(h.id);
+        this.renderHistory(document.getElementById('history-search-input').value.trim());
+      });
+      foot.appendChild(time);
+      foot.appendChild(del);
+
+      item.appendChild(q);
+      item.appendChild(a);
+      item.appendChild(foot);
+      list.appendChild(item);
+    });
+  },
+
+  _fmtTime(ts) {
+    if (!ts) return '';
+    const d = new Date(ts);
+    const p = n => String(n).padStart(2, '0');
+    const sameDay = d.toDateString() === new Date().toDateString();
+    const hm = `${p(d.getHours())}:${p(d.getMinutes())}`;
+    return sameDay ? '今天 ' + hm : `${d.getMonth() + 1}月${d.getDate()}日 ${hm}`;
   },
 
   _showLoading() {

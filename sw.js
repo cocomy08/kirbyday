@@ -1,4 +1,4 @@
-const VERSION = '2.2.0';
+const VERSION = '2.3.0';
 const CACHE = 'kirbyday-' + VERSION;
 
 self.addEventListener('install', event => {
